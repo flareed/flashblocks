@@ -1,0 +1,51 @@
+.cart-icon 
+{
+    background: url("/files/icons/cart.svg") no-repeat center;
+    background-size: contain;   
+}
+
+.account-icon 
+{
+    background: url("/files/icons/account.svg") no-repeat center;
+    background-size: contain;
+}
+
+.icon-filter
+{
+    filter: grayscale(100%) brightness(0) invert(50%);
+}
+
+.icon-filter:hover
+{
+    filter: none;
+}
+
+.social-facebook-icon
+{
+    background: url("/files/icons/social_facebook.svg") no-repeat center;
+    background-size: contain;   
+}
+
+.social-twitter-icon
+{
+    background: url("/files/icons/social_twitter.svg") no-repeat center;
+    background-size: contain;   
+}
+
+.social-instagram-icon
+{
+    background: url("/files/icons/social_instagram.svg") no-repeat center;
+    background-size: contain;   
+}
+
+.social-linkedin-icon
+{
+    background: url("/files/icons/social_linkedin.svg") no-repeat center;
+    background-size: contain;   
+}
+
+
+
+
+
+
