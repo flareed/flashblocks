@@ -1,5 +1,6 @@
 .git
 
+*.bat
 node_modules/
 .env
 test*.js
