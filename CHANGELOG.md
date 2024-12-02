@@ -1,4 +1,4 @@
-GA06:
+# GA06
 ```
 + Added dotenv nodejs module (now can use dotenv to modify database related settings, express-session settings)
 + Added bcrypt module
@@ -11,13 +11,13 @@ GA06:
 * Changed layout to include message block to login & register
 ```
 
-Before GA07:
+# Before GA07
 ```
 * Changed layout.hbs {{{content}}} tag to {{{body}}}, so can use res.render 1 time instead of nested res.render()
 * Changed many .html files to .hbs extension to easier use res.render(<view>, { paramters: value })
 ```
 
-GA07:
+# GA07
 ```
 Soon
 ```

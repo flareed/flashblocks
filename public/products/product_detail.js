@@ -2,74 +2,63 @@ const express = require("express");
 const path = require("path");
 const router = express.Router();
 
-const myarray = [
-    {
-        product_name: "SC18",
-        product_category: "EDC Flashlight",
-        product_description: "Very long description text, don't ask why it is this long. I have no idea either ¯\_(ツ)_/¯",
-        product_image: "/files/images/edc_sc18.webp",
-        product_led_chip: "SST-40",
-        product_max_lumens: "1800",
-        product_battery: "18650",
-        product_price: 16.99,
-        product_link: "/product/edc_sc18"
-    },
-    {
-        product_name: "C8G",
-        product_category: "Tactical Flashlight",
-        product_description: "This is a description of product 2.",
-        product_image: "/files/images/tactical_c8g.webp",
-        product_led_chip: "SST-40",
-        product_max_lumens: "2000",
-        product_battery: "18650/21700",
-        product_price: 24.99,
-        product_link: "/product/tactical_c8g"
-    },
-    {
-        product_name: "C8L",
-        product_category: "Tactical Flashlight",
-        product_description: "Very long description text, don't ask why it is this long. I have no idea either ¯\_(ツ)_/¯",
-        product_image: "/files/images/tactical_c8l.webp",
-        product_led_chip: "XHP50.3",
-        product_max_lumens: "3100",
-        product_battery: "18650/21700",
-        product_price: 29.99,
-        product_link: "/product/tactical_c8l"
-    }
-];
+const root_dir = process.cwd();
+// const readfile = require(path.join(root_dir, './resources/js/readfile.js'));
+const database = require(path.join(root_dir, './resources/js/database.js'));
+const errorpage = require(path.join(root_dir, './resources/js/errorpage.js'));
 
-// Route for the product page (dynamic URL)
-router.get('/:id', function (req, res)
+async function processHandle(productId)
 {
-    const productId = req.params.id;  // Capture the product ID from the URL
+    const query_condition = ` WHERE PRODUCTS.display_name ILIKE $1`;
+    const same_category_query_condition = ` WHERE PRODUCTS.category = $1 AND PRODUCTS.name <> $2`;
 
-    // Find the product from the array using the ID
-    // const product = myarray.find(p => p.product_link === `/product/${productId}`);
-    const product = myarray.find(p => p.product_link.endsWith(productId));
-    console.log(`Url: ${product}`)
+    let same_category_products = [];
+    let product = null;
+    const products = await database.queryProducts(query_condition, [`%${productId}`]);
 
-    if (!product)
+    if (products.length === 0)
     {
-        return res.status(404).render("layout", { title: "Error: product not found", content: `<div class="flex items-center justify-center md:min-h-[360px] md:text-xl xl:text-3xl">Product not found</div>` });
+
+    }
+    else
+    {
+        product = products[0];
+        same_category_products = await database.queryProducts(same_category_query_condition, [product.product_category, product.product_name]);
     }
 
-    // Render the individual product page
+    return { product, same_category_products };
+}
+
+// /product/:id
+// /product is handled by app.use() already
+router.get('/:id', async function (req, res)
+{
+    const productId = req.params.id.replace("_", " ");
+    let product = [];
+    let same_category_products = [];
+
+    ({ product, same_category_products } = await processHandle(productId));
+
+    if (product === null)
+    {
+        errorpage.renderErrorPage(res, "Product not found");
+        return;
+    }
+
     res.render('products/product_detail', {
         product_name: product.product_name,
+        product_brand: product.product_brand,
+        product_display_name: product.product_display_name,
+        product_description: product.product_description,
         product_category: product.product_category,
         product_price: product.product_price,
         product_image: product.product_image,
         product_led_chip: product.product_led_chip,
         product_max_lumens: product.product_max_lumens,
         product_battery: product.product_battery,
-        layout: false
-    }, function (err, html)
-    {
-        res.render('layout', {
-            title: product.product_name,
-            content: html,  // Inject the rendered HTML of products.hbs
-            layout: false  // Don't use a layout for this specific response
-        })
+        same_category_products: same_category_products,
+        
+        title: `${product.product_brand} ${product.product_name} ${product.product_category} `
     });
 });
 

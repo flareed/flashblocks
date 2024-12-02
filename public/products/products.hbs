@@ -1,10 +1,53 @@
-<div class="content flex flex-wrap md:-ml-4 md:-mr-4">
+<div class="content">
     <!-- Page title -->
-    <div class="flex flex-col text-center w-full mb-8">
+    <div class="text-center w-full mb-8">
         <h1 class="sm:text-3xl text-2xl font-medium title-font text-gray-900">Products</h1>
     </div>
 
-    {{#each product_list}}
-        {{> product}}
-    {{/each}}
+    <div class="flex flex-col lg:flex-row">
+        <div class="lg:w-1/6">
+            <div>Filter UIs will be implemented here (now it is only possible by using url)</div>
+            <div>Example query: </div>
+            <div>
+                <a href="/search?text=c8" class="text-indigo-500">1. Only name (c8)</a><br>
+                <a href="/search?text=Very long" class="text-indigo-500">2. Only description text (Very long)</a><br>
+                <a href="/search?text=sofirn&price_from=17" class="text-indigo-500">3. Text (sofirn) &amp; price
+                    (>=17)</a><br>
+                <a href="/search?text=idea either&price_from=25&category=diving flashlight&lumens_from=2000&led_chip=XHP50.2"
+                    class="text-indigo-500">4. Text (idea either) &amp; price (&gt;=25) &amp; category (diving
+                    flashlight) &amp; max
+                    lumens
+                    from (2000) &amp; led_chip (XHP50.2)</a><br>
+            </div>
+
+            <div><br></div>
+
+            <div>Format: 127.0.0.1:3000/search?arg1=data&#32;here&amp;arg2=also&#32;data&#32;here</div>
+            <div>Example: 127.0.0.1:3000/search?text=sofirn&amp;led_chip=SFT40</div>
+
+            <div><br></div>
+
+            <div>It will have the following:</div>
+            <ul class="list-disc">
+                <li>text (display name &amp; description)</li>
+                <li>price_from (&gt;= x)</li>
+                <li>category</li>
+                <li>lumens_from (max lumens &gt;= x)</li>
+                <li>led_chip</li>
+            </ul>
+
+        </div>
+
+        <div class="lg:w-5/6 flex flex-wrap">
+            {{!-- Found nothing text in case found nothing --}}
+            <div
+                class="flex flex-grow h-40 lg:h-auto items-center justify-center text-xl font-bold border {{#if message}}visible{{else}}hidden{{/if}}">
+                {{message}}</div>
+
+            {{#each product_list}}
+            {{> product}}
+            {{/each}}
+        </div>
+    </div>
+
 </div>

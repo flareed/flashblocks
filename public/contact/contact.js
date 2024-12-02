@@ -7,15 +7,7 @@ const readfile = require(path.join(root_dir, './resources/js/readfile'));
 /* GET home page. */
 router.get('/', async function (req, res, next)
 {
-    try
-    {
-        const data = await readfile.getHTMLContent(path.join(__dirname, "contact.html"))
-        res.render('layout', { title: 'Contact us', content: data });
-    }
-    catch (err)
-    {
-        res.status(500).send('Error rendering page');
-    }
+    res.render('contact/contact.hbs', { title: 'Contact us' });
 });
 
 module.exports = router;

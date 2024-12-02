@@ -19,4 +19,4 @@ async function getHTMLContent(filepath)
 
 module.exports = { 
   getHTMLContent 
-}
+};

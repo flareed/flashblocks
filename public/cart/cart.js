@@ -7,15 +7,7 @@ const readfile = require(path.join(root_dir, './resources/js/readfile'));
 /* GET home page. */
 router.get('/', async function (req, res, next)
 {
-    try
-    {
-        const data = await readfile.getHTMLContent(path.join(__dirname, "cart.html"))
-        res.render('layout', { title: 'Shopping cart', content: data });
-    }
-    catch (err)
-    {
-        res.status(500).send('Error rendering page');
-    }
+    res.render('cart/cart.hbs', { title: 'Shopping cart' });
 });
 
 module.exports = router;
