@@ -4,8 +4,9 @@ Nodejs 20 LTS
 Nodejs framework: expressjs 4
 
 Node modules: express-session, passport, bcrypt, hbs (handlebars),... (all can be viewed from package.json)
+`these will be installed when doing npm install`
 
-Posgresql 15 (running on debian 12 arm64)
+Posgresql 15 (running on debian 12, arm64 CPU)
 
 Tailwind CSS 3.4.15
 
@@ -16,6 +17,8 @@ Tailwind CSS 3.4.15
 Example: you want to host on port 3500, make it like this: PORT=3500
 
 # III RUNNING
+### 0.5 The versions are in I INFO (nodejs, postgresql)
+
 ### 1. Download and navigate to folder with app.js
 Either download everything through github or use `git clone` command
 

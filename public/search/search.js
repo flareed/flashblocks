@@ -8,6 +8,34 @@ const readfile = require(path.join(root_dir, '/resources/js/readfile.js'));
 const database = require(path.join(root_dir, '/resources/js/database.js'));
 const DEFAULT_PAGE_LIMIT = 2
 
+// left: the name
+// right: database column name
+const product_format = {
+    product_name: "name",
+    product_brand: "brand",
+    product_display_name: "display_name",
+    product_category: "category",
+    product_price: "price",
+    product_image: "imagepath",
+    product_link: "link",
+    product_battery: "battery",
+    product_max_lumens: "lumen",
+    product_led_chip: "led_chip",
+    product_description: "description",
+};
+
+function product_map_function(row, format)
+{
+    const mappedRow = {};
+
+    for (const [desiredColumn, originalColumn] of Object.entries(format))
+    {
+        mappedRow[desiredColumn] = row[originalColumn];
+    }
+
+    return mappedRow;
+}
+
 // req is req from router.get()
 function makeFilterQueryAndParameters(req)
 {
@@ -58,7 +86,7 @@ function makeFilterQueryAndParameters(req)
 
     if (page || limit)
     {
-        if (isNaN(page))
+        if (isNaN(page) && page < 1)
         {
             page = 1;
         }
@@ -67,7 +95,7 @@ function makeFilterQueryAndParameters(req)
             page = Number(page);
         }
 
-        if (isNaN(limit))
+        if (isNaN(limit) && limit < 1)
         {
             limit = DEFAULT_PAGE_LIMIT;
         }
@@ -106,7 +134,7 @@ async function processHandle(req)
     // Get the products
     condition_query += ` LIMIT $${query_parameters.length + 1} OFFSET $${query_parameters.length + 2}`;
     query_parameters.push(limit, offset);
-    let products = await database.queryProducts(condition_query, query_parameters);
+    let products = await database.queryProductsPagination(condition_query, query_parameters);
 
     return { search_text, products, page, limit, page_count }
 }
@@ -119,6 +147,8 @@ router.get('/', async function (req, res, next)
 
     // () outside is to destructering
     ({ search_text, products } = await processHandle(req));
+    products = products.map( (row) => product_map_function(row, product_format) )
+    console.log(products);
 
     res.render('products/products', {
         product_list: products,
@@ -137,20 +167,23 @@ router.post('/', async function (req, res, next)
     let products = [];
 
     ({ search_text, products, page, limit, page_count } = await processHandle(req));
+    products = products.map( (row) => product_map_function(row, product_format) );
 
     const product_template_path = path.join(root_dir, "/public/products/partial/product.hbs")
     const product_template = await readfile.getFileContent(product_template_path);
     const products_json = JSON.stringify(products, null, 4); // string, replacer, tab_length
 
-    console.log(`Product count: ${products.length}`)
+    console.log(`Current Page: ${page}`)
+    console.log(`Limt: ${limit}`)
+    console.log(`Total page: ${page_count}`)
 
     res.json({
         product_template: product_template,
         product_list: products_json,
 
-        page: parseInt(page),
+        currentPage: parseInt(page),
         limit: parseInt(limit),
-        page_count: page_count
+        pageCount: parseInt(page_count)
     });
 });
 

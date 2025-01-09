@@ -56,30 +56,48 @@
             </form>
         </div>
 
-        <div id="product-list" class="lg:w-5/6 flex flex-wrap">
+        <div class="lg:w-5/6">
+            <div class="flex flex-col items-center space-x-0 md:flex-row md:space-x-2">
+                <button id="sort-name-asc" class="w-48 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4">
+                    Name A->Z
+                </button>
+                <button id="sort-name-desc" class="w-48 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4">
+                    Name Z->A
+                </button>
+                <button id="sort-price-asc" class="w-48 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4">
+                    Price low to high
+                </button>
+                <button id="sort-price-desc" class="w-48 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4">
+                    Price high to flow
+                </button>
+            </div>
+
             <!-- Found nothing text -->
             <div class="flex flex-grow h-40 lg:h-auto items-center justify-center text-xl font-bold border hidden"
                 id="no-products">
                 No products found.
             </div>
 
-            {{#each product_list}}
-            {{> product}}
-            {{/each}}
+            <div id="product-list" class="flex flex-row flex-wrap">
+                {{#each product_list}}
+                {{> product}}
+                {{/each}}
+            </div>
         </div>
     </div>
 
-    <div id="pagination-controls" class="flex flex-row justify-center mt-6 mb-4 hidden">
+    <div id="pagination-controls" class="flex flex-row justify-center items-center mt-6 mb-4">
         <button id="prev-page"
             class="w-24 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l disabled:opacity-50"
             disabled>
             Previous
         </button>
-        <div id="current-page" class="ml-2 mr-2">Page 1</span>
-            <button id="next-page"
-                class="w-24 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r">
-                Next
-            </button>
-        </div>
+
+        <div id="current-page" class="ml-2 mr-2">Page 1</span></div>
+
+        <button id="next-page"
+            class="w-24 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r disabled:opacity-50">
+            Next
+        </button>
     </div>
 </div>

@@ -2,15 +2,65 @@ document.addEventListener("DOMContentLoaded", () =>
 {
     let currentPage = 1;
     let limit = 2;
+    let pageCount = 1;
 
     const filterForm = document.getElementById("filter-form");
     const applyFiltersButton = document.getElementById("apply-filters");
     const productList = document.getElementById("product-list");
     const noProductsMessage = document.getElementById("no-products");
 
+    const sort_name_asc_button = document.getElementById("sort-name-asc");
+    const sort_name_desc_button = document.getElementById("sort-name-desc");
+    const sort_price_asc_button = document.getElementById("sort-price-asc");
+    const sort_price_desc_button = document.getElementById("sort-price-desc");
+
+    sort_name_asc_button.addEventListener("click", () => sortName(asc = true));
+    sort_name_desc_button.addEventListener("click", () => sortName(asc = false));
+    sort_price_asc_button.addEventListener("click", () => sortPrice(true));
+    sort_price_desc_button.addEventListener("click", () => sortPrice(false));
+
     const prevPageButton = document.getElementById("prev-page");
     const nextPageButton = document.getElementById("next-page");
     const currentPageDisplay = document.getElementById("current-page");
+
+    // Function to sort products by price
+    function sortPrice(asc = true)
+    {
+        const products = Array.from(productList.querySelectorAll(".product"));
+
+        products.sort((a, b) =>
+        {
+            const priceA = parseFloat(a.querySelector(".product-price").textContent);
+            const priceB = parseFloat(b.querySelector(".product-price").textContent);
+
+            return asc ? priceA - priceB : priceB - priceA;
+        });
+
+        updateProductList(products);
+    }
+
+    // Function to sort products by name
+    function sortName(asc = true)
+    {
+        const products = Array.from(productList.querySelectorAll(".product"));
+
+        products.sort((a, b) =>
+        {
+            const nameA = a.querySelector(".product-name").textContent.toLowerCase();
+            const nameB = b.querySelector(".product-name").textContent.toLowerCase();
+
+            return asc ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+        });
+
+        updateProductList(products);
+    }
+
+    // Helper function to update the product list
+    function updateProductList(sortedProducts)
+    {
+        productList.innerHTML = ""; // Clear existing products
+        sortedProducts.forEach(product => productList.appendChild(product)); // Re-append sorted products
+    }
 
     // Apply filters by constructing URL with query params
     const applyFilters = async () =>
@@ -45,12 +95,18 @@ document.addEventListener("DOMContentLoaded", () =>
             method: "POST"
         });
 
-        const { product_list, product_template, page_count } = await response.json();
-        console.log(page_count);
+        const reply = await response.json();
+        const { product_list, product_template } = reply;
+        currentPage = reply.currentPage;
+        limit = reply.limit;
+        pageCount = reply.pageCount;
 
         if (product_list.length > 0)
         {
-            noProductsMessage.classList.add("hidden");
+            if (!noProductsMessage.classList.contains("hidden"))
+            {
+                noProductsMessage.classList.add("hidden");
+            }
 
             // Compile and render the Handlebars template
             const products = JSON.parse(product_list); // Convert string to object if necessary
@@ -58,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () =>
             const renderedHtml = products.map(product => compiledTemplate(product)).join("");
             productList.innerHTML = renderedHtml;
 
-            // updatePaginationControls(page_count);
+            updatePaginationControls(pageCount);
             addCartEventListener();
         }
         else
@@ -120,6 +176,8 @@ document.addEventListener("DOMContentLoaded", () =>
     // Update pagination controls based on the current and total pages
     const updatePaginationControls = (page_count) =>
     {
+        console.log(`Page: ${currentPage}, page count: ${pageCount}`);
+
         currentPageDisplay.textContent = `Page ${currentPage}`;
         prevPageButton.disabled = (currentPage <= 1);
         nextPageButton.disabled = (currentPage >= page_count || page_count === 0);

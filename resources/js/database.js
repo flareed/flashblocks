@@ -27,6 +27,7 @@ function createExpressSession(session)
     });
 }
 
+// will return object
 async function query(query, parameters)
 {
     let result = "";
@@ -85,9 +86,37 @@ async function queryUsers(condition_query = "", parameters)
 }
 
 // will return JavaScript array
+async function queryProductsPagination(condition_query = "", parameters)
+{
+    let result = {};
+
+    if (condition_query.trim() === "")
+    {
+        result = await query(DEFAULT_QUERY_ALL_PRODUCTS, parameters);
+    }
+    else
+    {
+        result = await query(DEFAULT_QUERY_ALL_PRODUCTS + condition_query, parameters);
+    }
+
+    // handle no result from query
+    if (result.rows == null)
+    {
+        result = [];
+    }
+    else
+    {
+        result = result.rows; // content returned from postgresql
+    }
+
+    result = Array.from(result); // converts to javascript array
+    return result;
+}
+
+// will return JavaScript array
 async function queryProducts(condition_query = "", parameters)
 {
-    let result = [];
+    let result = {};
 
     if (condition_query.trim() === "")
     {
@@ -364,7 +393,7 @@ async function queryCartAdditional(condition_query = "", parameters)
 module.exports =
 {
     createExpressSession, 
-    query, queryUsers, queryProducts, queryCategorys, queryCart, 
+    query, queryUsers, queryProducts, queryProductsPagination, queryCategorys, queryCart, 
     isUsernameExist, isEmailExist, getPasswordFromUsername, getUserFromUsername, isProductNameExists, 
     insertUser,
     getCartRecord, insertCartRecord, updateCartRecord, deleteCartRecord, queryCartAdditional
