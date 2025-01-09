@@ -42,6 +42,7 @@ passport.use(new LocalStrategy({ usernameField: "username", passwordField: 'pass
 
 passport.serializeUser((user, callback) => 
 {
+    // console.log("Serializing user");
     callback(null, user.username);
 });
 
@@ -61,8 +62,6 @@ passport.deserializeUser(async (username, callback) =>
         // passing everything (except password) into userWithoutPassword
         // "user" is still the same, no field removed
         const { password, ...userWithoutPassword } = user;
-        // console.log(`Userwithout password:`)
-        // console.log("${userWithoutPassword}");
 
         callback(null, userWithoutPassword);
     }

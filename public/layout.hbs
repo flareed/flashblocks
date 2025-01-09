@@ -10,8 +10,7 @@
     <script src="/files/css/tailwind_cdn.css"></script>
 
     <link rel="stylesheet" href="/files/css/icons.css">
-    {{!--
-    <link rel="stylesheet" href="default.css"> --}}
+    {{!--<link rel="stylesheet" href="default.css"> --}}
 </head>
 
 <body>
@@ -204,7 +203,15 @@
             </div>
         </footer>
     </div>
-
+    {{#if client_needHandlebars}}
+    <script src="/files/js/handlebars.js"></script>
+    {{/if}}
+    {{#if needUtilities}}
+    <script src="/files/js/ajax_utilities.js"></script>
+    {{/if}}
+    {{#if needFiltering}}
+    <script src="/files/js/ajax_search_filtering.js"></script>
+    {{/if}}
     {{#if isRegisterPage}}
     <script src="/files/js/ajax_register.js"></script>
     {{/if}}
@@ -217,6 +224,14 @@
     {{#if isAccountPage}}
     <script src="/files/js/ajax_account.js"></script>
     {{/if}}
+    {{#if isCartPage}}
+    <script src="/files/js/ajax_cart.js"></script>
+    {{/if}}
+    {{#if needAddtoCart}}
+    <script src="/files/js/ajax_addtocart.js"></script>
+    {{/if}}
+
+    
 </body>
 
 </html>

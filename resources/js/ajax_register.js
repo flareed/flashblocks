@@ -3,7 +3,7 @@ document.getElementById("registration_form").addEventListener("submit", async fu
     e.preventDefault(); // Prevent form from reloading the page
 
     const formData = new FormData(this); // this = element from document.getElementByID()
-    const data = new URLSearchParams(formData); // ignore file if there is in post data
+    const data = new URLSearchParams(formData); // ignore file if there is file in post data
 
     const response = await fetch("/register", {
         method: "POST",

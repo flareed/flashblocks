@@ -1,22 +1,22 @@
 const fs = require('fs').promises;
 
-async function getHTMLContent(filepath)
+async function getFileContent(filepath, format = "utf8")
 {
-  let data = ""
+    let data = ""
 
-  try
-  {
-    data = await fs.readFile(filepath, 'utf8');
-  }
-  catch (err) 
-  {
-    console.error('Error reading files:', err);
-    throw err; // Rethrow the error so it can be caught in the route handler
-  }
+    try
+    {
+        data = await fs.readFile(filepath, format);
+    }
+    catch (err) 
+    {
+        console.error('Error reading files:', err);
+        throw err; // Rethrow the error so it can be caught in the route handler
+    }
 
-  return data
+    return data
 }
 
-module.exports = { 
-  getHTMLContent 
+module.exports = {
+    getFileContent
 };

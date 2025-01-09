@@ -1,5 +1,5 @@
 <!-- Product -->
-<product class="product flex flex-col lg:w-1/4 md:w-1/2 md:p-4 w-full">
+<product id="{{product_name}}" class="product flex flex-col lg:w-1/4 md:w-1/2 md:p-4 w-full">
     {{!-- Image --}}
     <a href="{{product_link}}" class="product-link block relative h-48 rounded overflow-hidden">
         <img alt="product image" class="product-image object-cover object-center w-full h-full block"
@@ -21,8 +21,8 @@
 
             {{!-- Price --}}
             <p class="mt-1">
-                <span class="product_currency">$</span>
-                <span class="product_price">{{product_price}}</span>
+                <span class="product-currency">$</span>
+                <span class="product-price">{{product_price}}</span>
             </p>
         </div>
 

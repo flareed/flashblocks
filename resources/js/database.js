@@ -1,6 +1,9 @@
+const pgSession = require("connect-pg-simple");
+
 const path = require('path');
 const root_dir = process.cwd();
 require(path.join(root_dir, "load_env.js"));
+require((path.join(__dirname, '/database_query.js')));
 
 const { Pool } = require('pg');
 
@@ -13,38 +16,159 @@ const pool = new Pool({
     database: process.env.DB_NAME   // Replace with your database name
 });
 
-const DEFAULT_INSERT_USER_QUERY = `
-    INSERT INTO public."USERS" (username, email, password)
-    VALUES ($1, $2, $3)
-    RETURNING *;
-`;
+function createExpressSession(session)
+{
+    const express_session_store = pgSession(session);
+    return new express_session_store({
+        pool: pool,                // Connection pool
+        tableName: 'sessions',   // Use another table-name than the default "session" one
+        ttl: 24 * 60 * 60, // Session expiration in seconds (24 hours)
+        // Insert other connect-pg-simple options here
+    });
+}
 
-const DEFAULT_QUERY_ALL_USERS = `
-    SELECT *
-    FROM public."USERS" AS USERS
-`;
+async function query(query, parameters)
+{
+    let result = "";
 
-const DEFAULT_QUERY_ALL_PRODUCTS_JSON = `
-    SELECT json_agg(json_build_object(
-        'product_name', name,
-        'product_brand', brand,
-        'product_display_name', display_name,
-        'product_category', category,
-        'product_price', price,
-        'product_image', imagepath,
-        'product_link', link,
-        'product_battery', battery,
-        'product_max_lumens', lumen,
-        'product_led_chip', led_chip,
-        'product_description', description
-    )) AS content
-    FROM public."PRODUCTS" AS PRODUCTS
-`;
+    try
+    {
+        console.log("Getting a client from pool");
+        const client = await pool.connect();
 
-const DEFAULT_QUERY_ALL_PRODUCTS = `
-    Select *
-    FROM public."PRODUCTS" AS PRODUCTS
-`;
+        if (parameters !== "undefined")
+        {
+            result = await client.query(query, parameters);
+        }
+        else
+        {
+            result = await client.query(query);
+        }
+
+        console.log("Releasing the client to pool");
+        client.release()
+    }
+    catch (err)
+    {
+        console.error('Error:', err.stack);
+    }
+
+    return result;
+}
+
+// will return JavaScript array
+async function queryUsers(condition_query = "", parameters)
+{
+    let result = [];
+
+    if (condition_query.trim() === "")
+    {
+        result = await query(DEFAULT_QUERY_ALL_USERS, parameters);
+    }
+    else
+    {
+        result = await query(DEFAULT_QUERY_ALL_USERS + condition_query, parameters);
+    }
+
+    // handle no result from query
+    if (result.rows == null)
+    {
+        result = [];
+    }
+    else
+    {
+        result = result.rows; // content returned from postgresql
+    }
+
+    result = Array.from(result); // converts to javascript array
+    return result;
+}
+
+// will return JavaScript array
+async function queryProducts(condition_query = "", parameters)
+{
+    let result = [];
+
+    if (condition_query.trim() === "")
+    {
+        result = await query(DEFAULT_QUERY_ALL_PRODUCTS_JSON, parameters);
+    }
+    else
+    {
+        result = await query(DEFAULT_QUERY_ALL_PRODUCTS_JSON + condition_query, parameters);
+    }
+    // console.log(DEFAULT_QUERY_ALL_PRODUCTS_JSON + condition_query);
+    // console.log(parameters);
+
+    let products = [];
+    // handling no result from query
+    if (result && result.rows.length > 0 && result.rows[0].content !== null) 
+    {
+        console.log("Query found row(s)");
+        products = result.rows[0].content;
+        // console.log(typeof(products));
+    }
+
+    products = Array.from(products); // converts to javascript array
+    return products;
+    // Stringify json array object
+    // return JSON(products, null, 4) // string, replacer, tab_length
+}
+
+// will return JavaScript array
+async function queryCart(condition_query = "", parameters)
+{
+    let result = [];
+
+    if (condition_query.trim() === "")
+    {
+        result = await query(DEFAULT_QUERY_CART, parameters);
+    }
+    else
+    {
+        result = await query(DEFAULT_QUERY_CART + condition_query, parameters);
+    }
+
+    // handle no result from query
+    if (result.rows == null)
+    {
+        result = [];
+    }
+    else
+    {
+        result = result.rows; // content returned from postgresql
+    }
+
+    result = Array.from(result); // converts to javascript array
+    return result;
+}
+
+async function queryCategorys(condition_query = "", parameters)
+{
+    let result = [];
+
+    if (condition_query.trim() === "")
+    {
+        result = await query(DEFAULT_QUERY_ALL_CATEGORIES, parameters);
+    }
+    else
+    {
+        result = await query(DEFAULT_QUERY_ALL_CATEGORIES + condition_query, parameters);
+    }
+
+    // handle no result from query
+    if (result.rows == null)
+    {
+        result = [];
+    }
+    else
+    {
+        result = result.rows; // content returned from postgresql
+    }
+
+    result = Array.from(result); // converts to javascript array
+    return result;
+}
 
 async function isUsernameExist(username)
 {
@@ -105,11 +229,11 @@ async function getUserFromUsername(username)
     return result;
 }
 
+// will return object
 async function getUserWithoutPasswordFromUsername(username)
 {
     let result = {};
 
-    SELECT 
     const data = await query(" WHERE USERS.username = $1", [username]);
 
     if (data.length > 0)
@@ -120,6 +244,45 @@ async function getUserWithoutPasswordFromUsername(username)
     return result;
 }
 
+// will return boolean
+async function isProductNameExists(product_name)
+{
+    let result = false;
+
+    const data = await queryProducts(" WHERE PRODUCTS.name = $1", [product_name]);
+
+    if (data.length > 0)
+    {
+        result = true;
+    }
+
+    return result;
+}
+
+// will return object
+async function getCartRecord(username, product_name)
+{
+    let result = {};
+
+    const data = await queryCart(" WHERE CART.username = $1 AND CART.product_name = $2", [username, product_name]);
+
+    if (data.length > 0)
+    {
+        result = data[0];
+    }
+
+    return result;
+}
+
+// will return boolean
+async function deleteCartRecord(username, product_name)
+{
+    const data = await query(DEFAULT_DELETE_CART_QUERY, [username, product_name]);
+
+    return true;
+}
+
+// will return boolean
 async function insertUser(username, email, password)
 {
     let result = false;
@@ -135,47 +298,53 @@ async function insertUser(username, email, password)
     return result;
 }
 
-async function query(query, parameters)
+// will return boolean
+async function insertCartRecord(username, product_name, quantity)
 {
-    let result = "";
+    let result = false;
 
-    try
+    const temp = await query(DEFAULT_INSERT_CART_QUERY, [username, product_name, quantity]);
+
+    if (temp.rows != null)
     {
-        console.log("Getting a client from pool");
-        const client = await pool.connect();
-
-        if (parameters !== "undefined")
-        {
-            result = await client.query(query, parameters);
-        }
-        else
-        {
-            result = await client.query(query);
-        }
-
-        console.log("Releasing the client to pool");
-        client.release()
-    }
-    catch (err)
-    {
-        console.error('Error:', err.stack);
+        console.log(temp.rows);
+        result = true;
     }
 
     return result;
 }
 
+async function updateCartRecord(username, product_name, quantity)
+{
+    // let result = false;
+
+    const temp = await query(DEFAULT_UPDATE_CART_QUERY, [username, product_name, quantity]);
+
+    return true;
+}
+
 // will return JavaScript array
-async function queryUsers(condition_query_str = "", parameters)
+// innerjoin with products table for more detail
+async function queryCartAdditional(condition_query = "", parameters)
 {
     let result = [];
 
-    if (condition_query_str.trim() === "")
+    const DEFAULT_QUERY_CART_2 = `
+    SELECT CART.username, CART.product_name, CART.quantity, 
+            PRODUCTS.display_name, PRODUCTS.imagepath, PRODUCTS.description, PRODUCTS.price
+    `;
+
+    const joining_query = ` 
+        INNER JOIN public."PRODUCTS" AS PRODUCTS ON CART.product_name = PRODUCTS.name
+    `;
+
+    if (condition_query.trim() === "")
     {
-        result = await query(DEFAULT_QUERY_ALL_USERS, parameters);
+        result = await query(DEFAULT_QUERY_CART + joining_query, parameters);
     }
     else
     {
-        result = await query(DEFAULT_QUERY_ALL_USERS + condition_query_str, parameters);
+        result = await query(DEFAULT_QUERY_CART + joining_query + condition_query, parameters);
     }
 
     // handle no result from query
@@ -192,36 +361,11 @@ async function queryUsers(condition_query_str = "", parameters)
     return result;
 }
 
-// will return JavaScript array
-async function queryProducts(condition_query_str = "", parameters)
-{
-    let result = [];
-
-    if (condition_query_str.trim() === "")
-    {
-        result = await query(DEFAULT_QUERY_ALL_PRODUCTS_JSON, parameters);
-    }
-    else
-    {
-        result = await query(DEFAULT_QUERY_ALL_PRODUCTS_JSON + condition_query_str, parameters);
-    }
-
-    let products = [];
-    // handling no result from query
-    if (result && result.rows.length > 0 && result.rows[0].content !== null) 
-    {
-        console.log("Query found row(s)");
-        products = result.rows[0].content;
-        // console.log(typeof(products));
-    }
-
-    products = Array.from(products); // converts to javascript array
-    return products;
-    // Stringify json array object
-    // return JSON(products, null, 4) // string, replacer, tab_length
-}
-
 module.exports =
 {
-    query, queryUsers, queryProducts, insertUser, isUsernameExist, isEmailExist, getPasswordFromUsername, getUserFromUsername
+    createExpressSession, 
+    query, queryUsers, queryProducts, queryCategorys, queryCart, 
+    isUsernameExist, isEmailExist, getPasswordFromUsername, getUserFromUsername, isProductNameExists, 
+    insertUser,
+    getCartRecord, insertCartRecord, updateCartRecord, deleteCartRecord, queryCartAdditional
 };

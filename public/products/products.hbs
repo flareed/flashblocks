@@ -6,43 +6,62 @@
 
     <div class="flex flex-col lg:flex-row">
         <div class="lg:w-1/6">
-            <div>Filter UIs will be implemented here (now it is only possible by using url)</div>
-            <div>Example query: </div>
-            <div>
-                <a href="/search?text=c8" class="text-indigo-500">1. Only name (c8)</a><br>
-                <a href="/search?text=Very long" class="text-indigo-500">2. Only description text (Very long)</a><br>
-                <a href="/search?text=sofirn&price_from=17" class="text-indigo-500">3. Text (sofirn) &amp; price
-                    (>=17)</a><br>
-                <a href="/search?text=idea either&price_from=25&category=diving flashlight&lumens_from=2000&led_chip=XHP50.2"
-                    class="text-indigo-500">4. Text (idea either) &amp; price (&gt;=25) &amp; category (diving
-                    flashlight) &amp; max
-                    lumens
-                    from (2000) &amp; led_chip (XHP50.2)</a><br>
-            </div>
+            <form id="filter-form" class="space-y-4">
+                <div>
+                    <label for="text" class="block text-sm font-medium text-gray-700">Search Text</label>
+                    <input type="text" name="text" id="text" placeholder="Search..."
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
 
-            <div><br></div>
+                <div>
+                    <label for="price_from" class="block text-sm font-medium text-gray-700">Starting Price</label>
+                    <input type="number" name="price_from" id="price_from" placeholder="Min Price"
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
 
-            <div>Format: 127.0.0.1:3000/search?arg1=data&#32;here&amp;arg2=also&#32;data&#32;here</div>
-            <div>Example: 127.0.0.1:3000/search?text=sofirn&amp;led_chip=SFT40</div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Category</label>
+                    <div id="category">
+                        <div>
+                            <input type="checkbox" name="category" value="EDC Flashlight" id="edc-flashlight">
+                            <label for="edc-flashlight">EDC Flashlight</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" name="category" value="Tactical Flashlight" id="tactical-flashlight">
+                            <label for="tactical-flashlight">Tactical Flashlight</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" name="category" value="Diving Flashlight" id="diving-flashlight">
+                            <label for="diving-flashlight">Diving Flashlight</label>
+                        </div>
+                    </div>
+                </div>
 
-            <div><br></div>
+                <div>
+                    <label for="lumens_from" class="block text-sm font-medium text-gray-700">Max Lumens from</label>
+                    <input type="number" name="lumens_from" id="lumens_from" placeholder="Min Lumens"
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
 
-            <div>It will have the following:</div>
-            <ul class="list-disc">
-                <li>text (display name &amp; description)</li>
-                <li>price_from (&gt;= x)</li>
-                <li>category</li>
-                <li>lumens_from (max lumens &gt;= x)</li>
-                <li>led_chip</li>
-            </ul>
+                <div>
+                    <label for="led_chip" class="block text-sm font-medium text-gray-700">LED Chip</label>
+                    <input type="text" name="led_chip" id="led_chip" placeholder="LED Chip"
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
 
+                <button type="button" id="apply-filters"
+                    class="mt-4 w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    Apply Filters
+                </button>
+            </form>
         </div>
 
-        <div class="lg:w-5/6 flex flex-wrap">
-            {{!-- Found nothing text in case found nothing --}}
-            <div
-                class="flex flex-grow h-40 lg:h-auto items-center justify-center text-xl font-bold border {{#if message}}visible{{else}}hidden{{/if}}">
-                {{message}}</div>
+        <div id="product-list" class="lg:w-5/6 flex flex-wrap">
+            <!-- Found nothing text -->
+            <div class="flex flex-grow h-40 lg:h-auto items-center justify-center text-xl font-bold border hidden"
+                id="no-products">
+                No products found.
+            </div>
 
             {{#each product_list}}
             {{> product}}
@@ -50,4 +69,17 @@
         </div>
     </div>
 
+    <div id="pagination-controls" class="flex flex-row justify-center mt-6 mb-4 hidden">
+        <button id="prev-page"
+            class="w-24 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l disabled:opacity-50"
+            disabled>
+            Previous
+        </button>
+        <div id="current-page" class="ml-2 mr-2">Page 1</span>
+            <button id="next-page"
+                class="w-24 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r">
+                Next
+            </button>
+        </div>
+    </div>
 </div>

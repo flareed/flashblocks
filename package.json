@@ -1,6 +1,6 @@
 {
   "name": "flashblocks",
-  "version": "0.6",
+  "version": "0.8",
   "private": true,
   "scripts": {
     "start": "node ./server_starter/server_starter",
@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "connect-pg-simple": "^10.0.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "dotenv": "^16.4.5",

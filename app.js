@@ -1,11 +1,11 @@
 const path = require('path');
 const createError = require('http-errors');
-const errorpage = require(path.join(__dirname, 'resources/js/errorpage'));
 require(path.join(__dirname, "load_env.js"));
 const express = require('express');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const database = require(path.join(__dirname, "/resources/js/database.js"));
 const mypassport = require(path.join(__dirname, "/resources/js/passport.js"));
 
 const app = express();
@@ -23,11 +23,16 @@ app.set('views', path.join(__dirname, 'public'));
 
 /* express-session + passport */
 app.use(session({
-    // secret: process.env.SESSION_SECRET,  // Use a strong secret
-    secret: "orangexdd",  // Use a strong secret
+    store: database.createExpressSession(session),
+    secret: process.env.SESSION_SECRET,  // Use a strong secret
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false }   // Set to true if using https
+    cookie:
+    {
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+        httpOnly: true, // Helps prevent XSS attacks
+        secure: process.env.SECURE_COOKIE // Set to true if using https
+    }   
 }));
 
 app.use(mypassport.initialize());
@@ -99,24 +104,22 @@ app.use('/account', account_handler);
 
 
 
-
+/* Default path for everything else */
 app.use(function (req, res, next)
 {
-    next(createError(404));
-    // res.status(404).send("Files not found")
+    next(createError(404, "Page not found"));
 });
 
-// error handler
+/* Error handling (must have these 4 parameters in that order) */
 app.use(function (err, req, res, next)
 {
     // set locals, only providing error in development
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
+    // res.locals.message = err.message;
+    // res.locals.error = req.app.get('env') === 'development' ? err : {};
 
     // render the error page
-    res.status(err.status || 500);
-    errorpage.renderErrorPage(res, "Page not found");
-    // res.render("error", { title: "Error: page not found", content: `Page not found` }, function(err, html)
+    // res.status(err.status || 500);
+    res.status(err.status).render("error.hbs", {content: `${err.message}`});
 });
 
 module.exports = app;

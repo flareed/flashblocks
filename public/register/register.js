@@ -74,7 +74,7 @@ router.post('/', async function (req, res, next)
     const message = await processRegister(req);
 
     // Respond with JSON
-    res.json({ message: message });
+    res.status(201).json({ message: message });
 });
 
 module.exports = router;

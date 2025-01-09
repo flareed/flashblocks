@@ -1,13 +1,89 @@
 const express = require('express');
 const path = require('path');
 const router = express.Router();
+
 const root_dir = process.cwd();
-const readfile = require(path.join(root_dir, './resources/js/readfile'));
+const hasher = require(path.join(root_dir, './resources/js/password_hashing.js'));
+const database = require(path.join(root_dir, './resources/js/database.js'));
 
 /* GET home page. */
 router.get('/', async function (req, res, next)
 {
-    res.render('cart/cart.hbs', { title: 'Shopping cart' });
+    let products = [];
+
+    if (req.isAuthenticated())
+    {
+        const username = req.user.username;
+
+        cartRecords = await database.queryCartAdditional(" WHERE CART.username = $1", [username]);
+        console.log(cartRecords);
+
+        if (cartRecords.length > 0)
+        {
+            products = cartRecords;
+        }
+    }
+
+    res.render('cart/cart.hbs', {
+        title: 'Shopping cart',
+        products: products,
+
+        isCartPage: true
+    });
+});
+
+router.post('/', async function (req, res, next)
+{
+    if (!req.isAuthenticated())
+    {
+        console.log("Not authenticated in cart page");
+        res.status(401).json({ message: "You need to log in before adding to cart" });
+        return;
+    }
+
+    const username = req.user.username;
+    const { action, id: product_name, quantity } = req.query;
+
+    // Ex: /cart?action=add&id=SC18
+    if (action && action === "add" && product_name && await database.isProductNameExists(product_name))
+    {
+        const cartRecord = await database.getCartRecord(username, product_name);
+        // console.log("Cart record: ");
+        // console.log(cartRecord);
+
+        // if there no data, insert
+        if (Object.keys(cartRecord).length < 1)
+        {
+            console.log("Inserting new cart record");
+            const result = await database.insertCartRecord(username, product_name, 1);
+        }
+        // if there data, update quantity
+        else
+        {
+            console.log("Updating existing cart record");
+            await database.updateCartRecord(username, product_name, cartRecord.quantity + 1);
+        }
+
+        res.status(200).json({ message: `Added ${product_name} to cart` });
+    }
+    // Ex: /cart?action=delete&id=SC18
+    else if (action && action === "delete" && product_name && await database.isProductNameExists(product_name))
+    {
+        console.log("Deleting record");
+        await database.deleteCartRecord(username, product_name);
+
+        res.status(200).json({ message: `Deleted ${product_name} from cart` });
+    }
+    else if (action && action === "update" && product_name && await database.isProductNameExists(product_name) && quantity && !isNaN(quantity))
+    {
+        await database.updateCartRecord(username, product_name, quantity);;
+
+        res.status(200).json({ message: `Updated ${product_name} from cart` });
+    }
+    else
+    {
+        res.status(500).json({ message: "Something is wrong" });
+    }
 });
 
 module.exports = router;

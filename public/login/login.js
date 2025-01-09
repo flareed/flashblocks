@@ -151,8 +151,7 @@ router.post('/', async function (req, res, next)
                 console.log("User logged in successfully");
 
                 message = "Logging in, redirecting in 3s";
-                res.json({ message: message, redirect: true, redirectUrl: "/account", duration: 3000 });
-
+                res.status(200).json({ message: message, redirect: true, redirectUrl: "/account", duration: 3000 });
             });
         })(req, res, next);
     }

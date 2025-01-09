@@ -1,12 +1,12 @@
 <!-- Content -->
 <div class="content flex flex-col items-center space-y-8">
     {{!-- Product detail --}}
-    <div class="text-gray-600 body-font overflow-hidden xl:min-w-[800px] xl:max-w-[1000px]">
+    <product id="{{product_name}}" class="product text-gray-600 body-font overflow-hidden xl:min-w-[800px] xl:max-w-[1000px]">
         <div class="flex flex-wrap items-center">
             <div class="w-full lg:w-1/2 lg:pr-10 lg:py-6 mb-6 lg:mb-0">
                 {{!-- Name + category --}}
                 <h2 class="product-category text-sm title-font text-gray-500 tracking-widest">{{product_category}}</h2>
-                <h1 class="product-name text-gray-900 text-3xl title-font font-medium mb-4">{{product_display_name}}
+                <h1 class="product-display-name text-gray-900 text-3xl title-font font-medium mb-4">{{product_display_name}}
                 </h1>
 
                 {{!-- Top bar (not usable yet) --}}
@@ -53,7 +53,7 @@
                                 </path>
                             </svg>
                         </button>
-                        <button class="cart-icon icon-filter w-10 h-10"></button>
+                        <button class="product-cart-button cart-icon icon-filter w-10 h-10"></button>
                     </div>
                 </div>
             </div>
@@ -61,7 +61,7 @@
             {{!-- Image --}}
             <img alt="product image" class="product-iamge lg:w-1/2 w-full lg:h-auto object-cover object-center rounded"
                 src="{{product_image}}">
-        </div>
+        </product>
     </div>
 
     <!-- Divider  -->

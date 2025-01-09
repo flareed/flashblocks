@@ -16,13 +16,15 @@ router.get('/', async function (req, res, next)
     if (!req.isAuthenticated())
     {
         // return next(createError(401, "You need to log in before viewing this page"));
-        return res.status(401).render("error_page.hbs", { title: "401 Unauthorized", error: "401 Unauthorized", message: "You need to login to view this page", layout: false });
+        // const err = new Error('Unauthorized access');
+        // err.status = 401;
+
+        return next(createError(401, "You need to login"));
     }
 
     const user = await database.getUserFromUsername(req.user.username);
     if (!user)
     {
-        return res.status(404).json({ message: "User not found" });
     }
 
     res.render('account/account.hbs', {
@@ -36,8 +38,8 @@ router.get('/', async function (req, res, next)
 
 router.post('/', async function (req, res, next)
 {
-    console.log(req.query.action);
-    console.log(req.body);
+    // console.log(req.query.action);
+    // console.log(req.body);
 
     if (req.query.action && req.query.action === "logout" && req.body.logout == true)
     {
