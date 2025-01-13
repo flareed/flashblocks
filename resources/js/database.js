@@ -62,13 +62,14 @@ async function queryUsers(condition_query = "", parameters)
 {
     let result = [];
 
+    sort_query = " ORDER BY USERS.username ASC"
     if (condition_query.trim() === "")
     {
-        result = await query(DEFAULT_QUERY_ALL_USERS, parameters);
+        result = await query(DEFAULT_QUERY_ALL_USERS + sort_query, parameters);
     }
     else
     {
-        result = await query(DEFAULT_QUERY_ALL_USERS + condition_query, parameters);
+        result = await query(DEFAULT_QUERY_ALL_USERS + condition_query + sort_query, parameters);
     }
 
     // handle no result from query

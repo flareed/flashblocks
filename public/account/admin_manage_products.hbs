@@ -11,7 +11,25 @@
             {{/if}}
         </div>
     </div>
-    
+
+
+    <!-- Search Form -->
+    <div class="flex flex-col md:flex-row space-x-4 space-y-2 md:space-y-0 mb-4">
+        <input type="text" id="search-name" placeholder="Search by name" class="p-2 border border-gray-300 rounded-md"
+            value="{{searchName}}">
+        <input type="text" id="search-category" placeholder="Search by category"
+            class="p-2 border border-gray-300 rounded-md" value="{{searchCategory}}">
+        <input type="text" id="search-manufacturer" placeholder="Search by manufacturer"
+            class="p-2 border border-gray-300 rounded-md" value="{{searchManufacturer}}">
+        <select id="sort-by" class="p-2 border border-gray-300 rounded-md">
+            <option value="name-asc" {{#if sortNameAsc}}selected{{/if}}>Sort by Name (A-Z)</option>
+            <option value="name-desc" {{#if sortNameDesc}}selected{{/if}}>Sort by Name (Z-A)</option>
+            <option value="price-asc" {{#if sortPriceAsc}}selected{{/if}}>Sort by Price (Low-High)</option>
+            <option value="price-desc" {{#if sortPriceDesc}}selected{{/if}}>Sort by Price (High-Low)</option>
+        </select>
+        <button id="search-btn" class="bg-blue-500 text-white py-2 px-4 rounded-md">Search</button>
+    </div>
+
     <div>
         <h1 class="text-2xl font-bold mb-4">Product Management</h1>
         <table class="table-auto w-full border-collapse border border-gray-300">
@@ -34,3 +52,31 @@
         </table>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function ()
+    {
+        const searchBtn = document.getElementById("search-btn");
+        const name_textbox = document.getElementById("search-name");
+        const category_textbox = document.getElementById("search-category");
+        const manufacturer_textbox = document.getElementById("search-manufacturer");
+        const sort_combobox = document.getElementById("sort-by");
+
+        searchBtn.addEventListener("click", function ()
+        {
+            const searchName = name_textbox.value.trim();
+            const searchCategory = category_textbox.value.trim();
+            const searchManufacturer = manufacturer_textbox.value.trim();
+            const sort = sort_combobox.value;
+
+            const url = new URL(window.location.href);
+            url.searchParams.set("view", "manage_products");
+            if (searchName) url.searchParams.set("search", searchName);
+            if (searchCategory) url.searchParams.set("category", searchCategory);
+            if (searchManufacturer) url.searchParams.set("manufacturer", searchManufacturer);
+            if (sort) url.searchParams.set("sort", sort);
+
+            window.location.href = url.toString(); // Redirect to the updated URL with parameters
+        });
+    });
+</script>

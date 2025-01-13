@@ -9,6 +9,28 @@ const readfile = require(path.join(root_dir, './resources/js/readfile.js'));
 const hasher = require(path.join(root_dir, './resources/js/password_hashing.js'));
 const database = require(path.join(root_dir, './resources/js/database.js'));
 
+// left: the name
+// right: database column name
+const user_format = {
+    username: "username",
+    email: "email",
+    role: "role",
+    address: "address",
+    creditcard: "creditcard"
+};
+
+function map_function(row, format)
+{
+    const result = {};
+
+    for (const [desiredColumn, originalColumn] of Object.entries(format))
+    {
+        result[desiredColumn] = row[originalColumn];
+    }
+
+    return result;
+}
+
 /* GET home page. */
 router.get('/', async function (req, res, next)
 {
@@ -37,6 +59,10 @@ router.get('/', async function (req, res, next)
     let isManageProductsPage = false;
     let isManageOrdersPage = false;
 
+    let users = [];
+    let orders = [];
+    let products = [];
+
     if (req.user.role == "admin")
     {
         isAdmin = true;
@@ -58,6 +84,9 @@ router.get('/', async function (req, res, next)
     {
         title = "Manager Users";
         filepath = "account/admin_manage_users.hbs";
+
+        users = await database.queryUsers();
+        users = users.map((row) => map_function(row, user_format))
         isManageUsersPage = true;
     }
     else if (isAdmin && req.url == "/?view=manage_products")
@@ -84,9 +113,14 @@ router.get('/', async function (req, res, next)
         title: title,
         address: user.address,
         creditcard: user.creditcard,
+
+        users: users,
         isAdmin: isAdmin,
         isAccountPage: isAccountPage,
-        isAccountDetailPage: isAccountDetailPage
+        isAccountDetailPage: isAccountDetailPage,
+        isManageUsersPage: isManageUsersPage,
+        isManageProductsPage: isManageProductsPage,
+        isManageOrdersPage: isManageOrdersPage,
     });
 });
 

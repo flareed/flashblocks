@@ -12,6 +12,28 @@
         </div>
     </div>
 
+    <!-- Search and Sort -->
+    <div class="flex flex-col md:flex-row md:space-x-4 w-full md:justify-center">
+        <!-- Search -->
+        <div class="flex flex-col space-y-2">
+            <label for="search-input" class="font-semibold text-gray-700">Search</label>
+            <input type="text" id="search-input" class="w-full p-2 border border-gray-300 rounded-md"
+                placeholder="Search by name or email" />
+        </div>
+
+        <!-- Sort -->
+        <div class="flex flex-col space-y-2">
+            <label for="sort-select" class="font-semibold text-gray-700">Sort</label>
+            <select id="sort-select" class="w-full p-2 border border-gray-300 rounded-md">
+                <option value="name-asc">Name (A-Z)</option>
+                <option value="name-desc">Name (Z-A)</option>
+                <option value="email-asc">Email (A-Z)</option>
+                <option value="email-desc">Email (Z-A)</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- User Table -->
     <div>
         <h1 class="text-2xl font-bold mb-4">User Management</h1>
         <table class="table-auto w-full border-collapse border border-gray-300">
@@ -24,7 +46,7 @@
                     <th class="border border-gray-300 p-2">Credit card</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="user-table-body">
                 {{#each users}}
                 <tr>
                     <td class="border border-gray-300 p-2">{{username}}</td>
@@ -37,4 +59,48 @@
             </tbody>
         </table>
     </div>
+
 </div>
+
+<script>
+    // JavaScript for search and sort functionality
+    document.addEventListener("DOMContentLoaded", function ()
+    {
+        const search = document.getElementById("search-input");
+        const sort = document.getElementById("sort-select");
+        const tableBody = document.getElementById("user-table-body");
+
+        // Search functionality
+        search.addEventListener("input", function ()
+        {
+            const searchTerm = search.value.toLowerCase();
+            const rows = tableBody.querySelectorAll("tr");
+
+            rows.forEach(row =>
+            {
+                const name = row.cells[0].textContent.toLowerCase();
+                const email = row.cells[1].textContent.toLowerCase();
+                row.style.display = name.includes(searchTerm) || email.includes(searchTerm) ? "" : "none";
+            });
+        });
+
+        // Sort functionality
+        sort.addEventListener("change", function ()
+        {
+            const [key, order] = sort.value.split("-");
+            const rows = Array.from(tableBody.querySelectorAll("tr"));
+
+            rows.sort((a, b) =>
+            {
+                const cellA = a.cells[key === "name" ? 0 : 1].textContent.toLowerCase();
+                const cellB = b.cells[key === "name" ? 0 : 1].textContent.toLowerCase();
+
+                if (cellA < cellB) return order === "asc" ? -1 : 1;
+                if (cellA > cellB) return order === "asc" ? 1 : -1;
+                return 0;
+            });
+
+            rows.forEach(row => tableBody.appendChild(row)); // Reorder rows in the table
+        });
+    });
+</script>
