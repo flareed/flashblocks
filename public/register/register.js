@@ -25,6 +25,10 @@ async function processRegister(req)
     {
         message = "Passwords do not match.";
     }
+    else if (password.length < 6)
+    {
+        message = "Password is too short (min 6 chars)"
+    }
     else if (await database.isUsernameExist(username))
     {
         message = "Username already existed.";

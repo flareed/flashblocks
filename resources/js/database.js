@@ -3,7 +3,7 @@ const pgSession = require("connect-pg-simple");
 const path = require('path');
 const root_dir = process.cwd();
 require(path.join(root_dir, "load_env.js"));
-require((path.join(__dirname, '/database_query.js')));
+require(path.join(__dirname, '/database_query.js'));
 
 const { Pool } = require('pg');
 
@@ -327,6 +327,29 @@ async function insertUser(username, email, password)
     return result;
 }
 
+async function updateUserPassword(username, password)
+{
+    // let result = false;
+
+    const temp = await query(DEFAULT_UPDATE_USER_PASSWORD_QUERY, [username, password]);
+
+    return true;
+}
+
+async function updateUserDetail(username, address, creditcard)
+{
+    // let result = false;
+
+    const temp = await query(DEFAULT_UPDATE_USER_DETAIL, [username, address, creditcard]);
+
+    return true;
+}
+
+async function updateUserEmail(username, email)
+{
+    
+}
+
 // will return boolean
 async function insertCartRecord(username, product_name, quantity)
 {
@@ -395,6 +418,6 @@ module.exports =
     createExpressSession, 
     query, queryUsers, queryProducts, queryProductsPagination, queryCategorys, queryCart, 
     isUsernameExist, isEmailExist, getPasswordFromUsername, getUserFromUsername, isProductNameExists, 
-    insertUser,
+    insertUser, updateUserPassword, updateUserDetail,
     getCartRecord, insertCartRecord, updateCartRecord, deleteCartRecord, queryCartAdditional
 };

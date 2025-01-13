@@ -1,0 +1,48 @@
+<div class="content flex flex-col space-y-8 items-center">
+    <div>
+        <h2 class="text-lg font-bold mb-4 text-center">Navigation</h2>
+        <div class="flex flex-row justify-center md:space-x-2">
+            <a href="/account?view=detail" class="hover:text-gray-400 bg-gray-100 p-2">Account Detail</a>
+
+            {{#if isAdmin}}
+            <a href="/account?view=manage_users" class="hover:text-gray-400 bg-gray-100 p-2">Manage Users</a>
+            <a href="/account?view=manage_products" class="hover:text-gray-400 bg-gray-100 p-2">Manage Products</a>
+            <a href="/account?view=manage_orders" class="hover:text-gray-400 bg-gray-100 p-2">Manage Orders</a>
+            {{/if}}
+        </div>
+    </div>
+
+    <div class="w-full md:w-auto">
+        <!-- Title -->
+        <div class="flex flex-col text-center w-full">
+            <h1 class="sm:text-3xl text-2xl font-medium title-font text-gray-900">Account Details</h1>
+        </div>
+
+        <!-- Details Form -->
+        <form id="detail_form" class="flex flex-col md:min-w-[360px] space-y-2">
+            <!-- Address -->
+            <div class="mb-4 w-full">
+                <label for="address" class="block text-lg font-semibold text-gray-700">Address</label>
+                <input type="text" id="address" value="{{address}}"
+                    class="w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600" />
+            </div>
+
+            <!-- Credit Card -->
+            <div class="mb-4 w-full">
+                <label for="credit_card" class="block text-lg font-semibold text-gray-700">Credit Card</label>
+                <input type="text" id="credit_card" value="{{creditcard}}"
+                    class="w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600" />
+            </div>
+
+            <button type="submit"
+                class="w-full bg-blue-500 text-white font-semibold py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                Save Details
+            </button>
+
+            <section class="mt-4 bg-red-500 w-full hidden" id="message-section">
+                <div class="font-bold p-4" id="message"></div>
+            </section>
+        </form>
+    </div>
+
+</div>

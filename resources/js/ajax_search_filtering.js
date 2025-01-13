@@ -1,7 +1,52 @@
+function getUrlParameter(name)
+{
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(name);
+}
+
+// Function to sort products by price
+function sortPrice(asc = true)
+{
+    const products = Array.from(productList.querySelectorAll(".product"));
+
+    products.sort((a, b) =>
+    {
+        const priceA = parseFloat(a.querySelector(".product-price").textContent);
+        const priceB = parseFloat(b.querySelector(".product-price").textContent);
+
+        return asc ? priceA - priceB : priceB - priceA;
+    });
+
+    updateProductList(products);
+}
+
+// Function to sort products by name
+function sortName(asc = true)
+{
+    const products = Array.from(productList.querySelectorAll(".product"));
+
+    products.sort((a, b) =>
+    {
+        const nameA = a.querySelector(".product-name").textContent.toLowerCase();
+        const nameB = b.querySelector(".product-name").textContent.toLowerCase();
+
+        return asc ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+    });
+
+    updateProductList(products);
+}
+
+// Helper function to update the product list
+function updateProductList(sortedProducts)
+{
+    productList.innerHTML = ""; // Clear existing products
+    sortedProducts.forEach(product => productList.appendChild(product)); // Re-append sorted products
+}
+
 document.addEventListener("DOMContentLoaded", () =>
 {
-    let currentPage = 1;
-    let limit = 2;
+    let currentPage = getUrlParameter('page') || 1;
+    let limit = getUrlParameter('limit') || 2;
     let pageCount = 1;
 
     const filterForm = document.getElementById("filter-form");
@@ -23,44 +68,23 @@ document.addEventListener("DOMContentLoaded", () =>
     const nextPageButton = document.getElementById("next-page");
     const currentPageDisplay = document.getElementById("current-page");
 
-    // Function to sort products by price
-    function sortPrice(asc = true)
-    {
-        const products = Array.from(productList.querySelectorAll(".product"));
+    currentPageDisplay.textContent = `Page ${currentPage}`;
+    prevPageButton.disabled = false;
 
-        products.sort((a, b) =>
+    document.getElementById("page-limit").addEventListener("change", function ()
+    {
+        const new_limit = parseInt(this.value);
+
+        if (new_limit == limit)
         {
-            const priceA = parseFloat(a.querySelector(".product-price").textContent);
-            const priceB = parseFloat(b.querySelector(".product-price").textContent);
-
-            return asc ? priceA - priceB : priceB - priceA;
-        });
-
-        updateProductList(products);
-    }
-
-    // Function to sort products by name
-    function sortName(asc = true)
-    {
-        const products = Array.from(productList.querySelectorAll(".product"));
-
-        products.sort((a, b) =>
+        }
+        else
         {
-            const nameA = a.querySelector(".product-name").textContent.toLowerCase();
-            const nameB = b.querySelector(".product-name").textContent.toLowerCase();
-
-            return asc ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
-        });
-
-        updateProductList(products);
-    }
-
-    // Helper function to update the product list
-    function updateProductList(sortedProducts)
-    {
-        productList.innerHTML = ""; // Clear existing products
-        sortedProducts.forEach(product => productList.appendChild(product)); // Re-append sorted products
-    }
+            limit = parseInt(this.value); // Get selected value (number of items per page)
+            currentPage = 1;
+            applyFilters();
+        }
+    });
 
     // Apply filters by constructing URL with query params
     const applyFilters = async () =>
@@ -79,10 +103,10 @@ document.addEventListener("DOMContentLoaded", () =>
         });
 
         params.append("page", currentPage);
-        params.append("limit", limit);
+        let url = `/search?${params.toString()}`;
 
-        // Construct the URL
-        const url = `/search?${params.toString()}`;
+        params.append("limit", limit);
+        url = `/search?${params.toString()}`;
 
         // Update the URL in the browser's address bar
         window.history.pushState({}, "", url);
@@ -176,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () =>
     // Update pagination controls based on the current and total pages
     const updatePaginationControls = (page_count) =>
     {
-        console.log(`Page: ${currentPage}, page count: ${pageCount}`);
+        console.log(`Page: ${currentPage}, limit: ${limit}, page count: ${pageCount}`);
 
         currentPageDisplay.textContent = `Page ${currentPage}`;
         prevPageButton.disabled = (currentPage <= 1);

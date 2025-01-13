@@ -1,0 +1,40 @@
+<div class="content flex flex-col space-y-8 items-center">
+    <div>
+        <h2 class="text-lg font-bold mb-4 text-center">Navigation</h2>
+        <div class="flex flex-row justify-center md:space-x-2">
+            <a href="/account?view=detail" class="hover:text-gray-400 bg-gray-100 p-2">Account Detail</a>
+
+            {{#if isAdmin}}
+            <a href="/account?view=manage_users" class="hover:text-gray-400 bg-gray-100 p-2">Manage Users</a>
+            <a href="/account?view=manage_products" class="hover:text-gray-400 bg-gray-100 p-2">Manage Products</a>
+            <a href="/account?view=manage_orders" class="hover:text-gray-400 bg-gray-100 p-2">Manage Orders</a>
+            {{/if}}
+        </div>
+    </div>
+
+    <div>
+        <h1 class="text-2xl font-bold mb-4">User Management</h1>
+        <table class="table-auto w-full border-collapse border border-gray-300">
+            <thead>
+                <tr>
+                    <th class="border border-gray-300 p-2">Username</th>
+                    <th class="border border-gray-300 p-2">Email</th>
+                    <th class="border border-gray-300 p-2">Role</th>
+                    <th class="border border-gray-300 p-2">Address</th>
+                    <th class="border border-gray-300 p-2">Credit card</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each users}}
+                <tr>
+                    <td class="border border-gray-300 p-2">{{username}}</td>
+                    <td class="border border-gray-300 p-2">{{email}}</td>
+                    <td class="border border-gray-300 p-2">{{role}}</td>
+                    <td class="border border-gray-300 p-2">{{address}}</td>
+                    <td class="border border-gray-300 p-2">{{creditcard}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>

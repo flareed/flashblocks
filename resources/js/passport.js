@@ -61,7 +61,7 @@ passport.deserializeUser(async (username, callback) =>
 
         // passing everything (except password) into userWithoutPassword
         // "user" is still the same, no field removed
-        const { password, ...userWithoutPassword } = user;
+        const { password, address, creditcard, ...userWithoutPassword } = user;
 
         callback(null, userWithoutPassword);
     }

@@ -1,0 +1,23 @@
+<div class="content flex flex-col space-y-8 items-center">
+    <div>
+        <h2 class="text-lg font-bold mb-4 text-center">Navigation</h2>
+        <div class="flex flex-row justify-center md:space-x-2">
+            <a href="/account?view=detail" class="hover:text-gray-400 bg-gray-100 p-2">Account Detail</a>
+
+            {{#if isAdmin}}
+            <a href="/account?view=manage_users" class="hover:text-gray-400 bg-gray-100 p-2">Manage Users</a>
+            <a href="/account?view=manage_products" class="hover:text-gray-400 bg-gray-100 p-2">Manage Products</a>
+            <a href="/account?view=manage_orders" class="hover:text-gray-400 bg-gray-100 p-2">Manage Orders</a>
+            {{/if}}
+        </div>
+    </div>
+
+    <div>
+        <h1 class="text-2xl font-bold mb-4">Order Management</h1>
+        <ul class="list-disc pl-5">
+            {{#each orders}}
+            <li>{{this}}</li>
+            {{/each}}
+        </ul>
+    </div>
+</div>

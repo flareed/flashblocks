@@ -1,35 +1,93 @@
-<div class="content flex flex-col justify-center items-center space-y-8">
-    <!-- Title -->
-    <div class="flex flex-col text-center w-full">
-        <h1 class="sm:text-3xl text-2xl font-medium title-font text-gray-900">Account page</h1>
+<div class="content flex flex-col space-y-8 items-center">
+    <div>
+        <h2 class="text-lg font-bold mb-4 text-center">Navigation</h2>
+        <div class="flex flex-row justify-center md:space-x-2">
+            <a href="/account?view=detail" class="hover:text-gray-400 bg-gray-100 p-2">Account Detail</a>
+
+            {{#if isAdmin}}
+            <a href="/account?view=manage_users" class="hover:text-gray-400 bg-gray-100 p-2">Manage Users</a>
+            <a href="/account?view=manage_products" class="hover:text-gray-400 bg-gray-100 p-2">Manage Products</a>
+            <a href="/account?view=manage_orders" class="hover:text-gray-400 bg-gray-100 p-2">Manage Orders</a>
+            {{/if}}
+        </div>
     </div>
 
-    <!-- Textboxes -->
-    <div class="flex flex-col md:min-w-[360px] space-y-2">
-        <!-- Username -->
-        <div class="mb-4 w-full">
-            <label for="username" class="block text-lg font-semibold text-gray-700">Username</label>
-            <input type="text" id="username" value="{{username}}" disabled
-                class="w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600" />
+    <div class="w-full md:w-auto">
+        <!-- Title -->
+        <div class="flex flex-col text-center">
+            <h1 class="sm:text-3xl text-2xl font-medium title-font text-gray-900">Account</h1>
         </div>
 
-        <!-- Email -->
-        <div class="mb-4 w-full">
-            <label for="email" class="block text-lg font-semibold text-gray-700">Email</label>
-            <input type="email" id="email" value="{{email}}" disabled
-                class="w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600" />
+        <!-- Textboxes -->
+        <div class="flex flex-col md:min-w-[360px] space-y-2">
+            <!-- Username -->
+            <div class="mb-4 w-full">
+                <label for="username" class="block text-lg font-semibold text-gray-700">Username</label>
+                <input type="text" id="username" value="{{username}}" disabled
+                    class="w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600" />
+            </div>
+
+            <!-- Email -->
+            <div class="mb-4 w-full">
+                <label for="email" class="block text-lg font-semibold text-gray-700">Email</label>
+                <input type="email" id="email" value="{{email}}" disabled
+                    class="w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600" />
+            </div>
+
+            <!-- Logout Button -->
+            <form id="logout_form" class="">
+                <button type="submit"
+                    class="w-full bg-red-500 text-white font-semibold py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                    Log out
+                </button>
+
+                <section class="mt-4 bg-red-500 w-full hidden" id="message-section">
+                    <div class="font-bold p-4" id="message"></div>
+                </section>
+            </form>
+        </div>
+    </div>
+
+    <div class="w-full md:w-auto">
+        <!-- Title -->
+        <div class="flex flex-col text-center">
+            <h1 class="sm:text-3xl text-2xl font-medium title-font text-gray-900">Password</h1>
         </div>
 
-        <!-- Logout Button -->
-        <form id="logout_form" class="w-full">
-            <button type="submit"
-                class="w-full bg-red-500 text-white font-semibold py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
-                Log out
-            </button>
+        <div class="flex flex-col md:min-w-[360px] space-y-2">
+            <!-- Current Password -->
+            <div class="mb-4 w-full">
+                <label for="current-password" class="block text-lg font-semibold text-gray-700">Current Password</label>
+                <input type="password" id="current-password"
+                    class="w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600" />
+            </div>
 
-            <section class="mt-4 bg-red-500 w-full hidden" id="message-section">
-                <div class="font-bold p-4" id="message"></div>
-            </section>
-        </form>
+            <!-- New Password -->
+            <div class="mb-4 w-full">
+                <label for="new-password" class="block text-lg font-semibold text-gray-700">New Password</label>
+                <input type="password" id="new-password"
+                    class="w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600" />
+            </div>
+
+            <!-- Confirm New Password -->
+            <div class="mb-4 w-full">
+                <label for="confirm-password" class="block text-lg font-semibold text-gray-700">Confirm New
+                    Password</label>
+                <input type="password" id="confirm-password"
+                    class="w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600" />
+            </div>
+
+            <!-- Change Password Button -->
+            <form id="change-password-form" class="w-full">
+                <button type="submit"
+                    class="w-full bg-blue-500 text-white font-semibold py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                    Change Password
+                </button>
+
+                <section class="mt-4 bg-red-500  hidden" id="password-message-section">
+                    <div class="font-bold p-4" id="password-message"></div>
+                </section>
+            </form>
+        </div>
     </div>
 </div>

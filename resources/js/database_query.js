@@ -47,6 +47,18 @@ DEFAULT_INSERT_CART_QUERY = `
     RETURNING *;
 `;
 
+DEFAULT_UPDATE_USER_PASSWORD_QUERY = `
+    UPDATE public."USERS"
+    SET password = $2 
+    WHERE username = $1;
+`
+
+DEFAULT_UPDATE_USER_DETAIL = `
+    UPDATE public."USERS"
+    SET address = $2, creditcard = $3
+    WHERE username = $1;
+`
+
 DEFAULT_UPDATE_CART_QUERY = `
     UPDATE public.cart 
     SET quantity = $3 
