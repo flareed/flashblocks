@@ -137,12 +137,12 @@ async function processHandle(req)
 
 async function processProductDetail(productId)
 {
-    const query_condition = ` WHERE PRODUCTS.display_name ILIKE $1`;
+    const query_condition = ` WHERE PRODUCTS.name ILIKE $1`;
     const same_category_query_condition = ` WHERE PRODUCTS.category = $1 AND PRODUCTS.name <> $2`;
 
     let same_category_products = [];
     let product = null;
-    const products = await database.queryProductsJsonAgg(query_condition, [`%${productId}`]);
+    const products = await database.queryProductsJsonAgg(query_condition, [`%${productId}%`]);
 
     if (products.length === 0)
     {
