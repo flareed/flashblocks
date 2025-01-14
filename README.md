@@ -1,23 +1,22 @@
 ﻿# I INFO
-Nodejs 20 LTS
+- Nodejs 20 LTS
 
-Nodejs framework: expressjs 4
+- Nodejs framework: expressjs 4
 
-Node modules: express-session, passport, bcrypt, hbs (handlebars),... (all can be viewed from package.json)
+- Node modules: express-session, passport, bcrypt, hbs (handlebars),... (all can be viewed from package.json)
 `these will be installed when doing npm install`
 
-Posgresql 15 (running on debian 12, arm64 CPU)
+- Posgresql 15 (running on debian 12, arm64 CPU)
 
-Tailwind CSS 3.4.15
+- Tailwind CSS 3.4.15
 
 # II CONFIG
 ### 1. Change ".env.example" to ".env"
 ### 2. Change the content of ".env"
-
 Example: you want to host on port 3500, make it like this: PORT=3500
 
 # III RUNNING
-### 0.5 The versions are in I INFO (nodejs, postgresql)
+### 0.5 The versions are in `I INFO` (nodejs, postgresql)
 
 ### 1. Download and navigate to folder with app.js
 Either download everything through github or use `git clone` command
@@ -43,7 +42,23 @@ In case you want to run with nodemon for development (nodemon is a module to mon
 
 By default: I configured it to restart on every .js .html .hbs file change
 
-# IV SOURCE
+# IV DEVELOPMENT
+- Client's JS files will have "ajax" prefix in the name (located in `/resources/js/`)
+- Most server's JS files that are being used by multiple services will be in `/resources/js/`
+(they also don't have "ajax" in the name)
+- JS files that are used by only a few are in `/public/<path_to_the_service>`
+- Want to generate a password to be input manually in database?
+```
+node gen.js <your password>
+```
+```
+node gen.js passwordSomething
+
+Hashed password for "passwordSomething" is:
+$2b$10$1J2zwTtduWzLG4pPQUbjN.Pmr4AOjprAiSQ22zE16n9apLeGOd3Ga
+```
+
+# V SOURCE
 [tailblocks.cc](https://tailblocks.cc) for references
 
 [flowbite.com](https://flowbite.com/docs/forms/search-input/)
