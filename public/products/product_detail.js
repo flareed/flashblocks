@@ -4,7 +4,7 @@ const path = require("path");
 const router = express.Router();
 
 const root_dir = process.cwd();
-// const readfile = require(path.join(root_dir, './resources/js/readfile.js'));
+const helper = require(path.join(__dirname, 'helper.js'));
 const database = require(path.join(root_dir, './resources/js/database.js'));
 
 // /product/:id
@@ -15,7 +15,7 @@ router.get('/:id', async function (req, res, next)
     let product = [];
     let same_category_products = [];
 
-    ({ product, same_category_products } = await processProductDetail(productId));
+    ({ product, same_category_products } = await helper.processProductDetail(productId));
 
     if (product === null)
     {
@@ -40,30 +40,6 @@ router.get('/:id', async function (req, res, next)
         needAddtoCart: true
     });
 });
-
-
-async function processProductDetail(productId)
-{
-    const query_condition = ` WHERE PRODUCTS.display_name ILIKE $1`;
-    const same_category_query_condition = ` WHERE PRODUCTS.category = $1 AND PRODUCTS.name <> $2`;
-
-    let same_category_products = [];
-    let product = null;
-    const products = await database.queryProducts(query_condition, [`%${productId}`]);
-
-    if (products.length === 0)
-    {
-        
-    }
-    else
-    {
-        product = products[0];
-        same_category_products = await database.queryProducts(same_category_query_condition, [product.product_category, product.product_name]);
-    }
-
-    return { product, same_category_products };
-}
-
 
 // Export the router
 module.exports = router;

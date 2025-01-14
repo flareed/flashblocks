@@ -130,13 +130,35 @@ async function processHandle(req)
     // Get the products
     condition_query += ` LIMIT $${query_parameters.length + 1} OFFSET $${query_parameters.length + 2}`;
     query_parameters.push(limit, offset);
-    let products = await database.queryProductsPagination(condition_query, query_parameters);
+    let products = await database.queryProducts(condition_query, query_parameters);
 
     return { search_text, products, page, limit, page_count }
+}
+
+async function processProductDetail(productId)
+{
+    const query_condition = ` WHERE PRODUCTS.display_name ILIKE $1`;
+    const same_category_query_condition = ` WHERE PRODUCTS.category = $1 AND PRODUCTS.name <> $2`;
+
+    let same_category_products = [];
+    let product = null;
+    const products = await database.queryProductsJsonAgg(query_condition, [`%${productId}`]);
+
+    if (products.length === 0)
+    {
+        
+    }
+    else
+    {
+        product = products[0];
+        same_category_products = await database.queryProductsJsonAgg(same_category_query_condition, [product.product_category, product.product_name]);
+    }
+
+    return { product, same_category_products };
 }
 
 module.exports =
 {
     product_format, product_map_function, 
-    makeFilterQueryAndParameters, processHandle
+    makeFilterQueryAndParameters, processHandle, processProductDetail
 }

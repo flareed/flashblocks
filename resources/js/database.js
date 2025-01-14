@@ -87,7 +87,7 @@ async function queryUsers(condition_query = "", parameters)
 }
 
 // will return JavaScript array
-async function queryProductsPagination(condition_query = "", parameters)
+async function queryProducts(condition_query = "", parameters)
 {
     let result = {};
 
@@ -115,7 +115,7 @@ async function queryProductsPagination(condition_query = "", parameters)
 }
 
 // will return JavaScript array
-async function queryProducts(condition_query = "", parameters)
+async function queryProductsJsonAgg(condition_query = "", parameters)
 {
     let result = {};
 
@@ -173,6 +173,7 @@ async function queryCart(condition_query = "", parameters)
     return result;
 }
 
+// will return JavaScript array
 async function queryCategorys(condition_query = "", parameters)
 {
     let result = [];
@@ -279,7 +280,7 @@ async function isProductNameExists(product_name)
 {
     let result = false;
 
-    const data = await queryProducts(" WHERE PRODUCTS.name = $1", [product_name]);
+    const data = await queryProductsJsonAgg(" WHERE PRODUCTS.name = $1", [product_name]);
 
     if (data.length > 0)
     {
@@ -319,9 +320,8 @@ async function insertUser(username, email, password)
 
     const temp = await query(DEFAULT_INSERT_USER_QUERY, [username, email, password]);
 
-    if (temp.rows != null)
+    if (temp.rows.length > 0)
     {
-        console.log(temp.rows);
         result = true;
     }
 
@@ -330,11 +330,16 @@ async function insertUser(username, email, password)
 
 async function updateUserPassword(username, password)
 {
-    // let result = false;
+    let result = false;
 
     const temp = await query(DEFAULT_UPDATE_USER_PASSWORD_QUERY, [username, password]);
 
-    return true;
+    if (temp.rows.length > 0)
+    {
+        result = true;
+    }
+
+    return result;
 }
 
 async function updateUserDetail(username, address, creditcard)
@@ -348,7 +353,7 @@ async function updateUserDetail(username, address, creditcard)
 
 async function updateUserEmail(username, email)
 {
-    
+
 }
 
 // will return boolean
@@ -358,9 +363,8 @@ async function insertCartRecord(username, product_name, quantity)
 
     const temp = await query(DEFAULT_INSERT_CART_QUERY, [username, product_name, quantity]);
 
-    if (temp.rows != null)
+    if (temp.rows.length > 0)
     {
-        console.log(temp.rows);
         result = true;
     }
 
@@ -414,11 +418,123 @@ async function queryCartAdditional(condition_query = "", parameters)
     return result;
 }
 
+async function insertProduct(data)
+{
+    let result = false;
+
+    const temp = await query(DEFAULT_INSERT_PRODUCT, [
+        data.name,
+        data.category,
+        data.price,
+        data.imagepath,
+        data.link,
+        data.battery,
+        data.lumen,
+        data.description,
+        data.led_chip,
+        data.brand,
+        data.display_name,
+        data.stock]);
+
+    if (temp.rows.length > 0)
+    {
+        result = true;
+    }
+
+    return result;
+}
+
+// info is object
+async function updateProduct(name, data)
+{
+    // let result = false;
+
+    const temp = await query(DEFAULT_UPDATE_PRODUCT, [
+        data.display_name,
+        data.category,
+        data.price,
+        data.imagepath,
+        data.link,
+        data.battery,
+        data.lumen,
+        data.description,
+        data.led_chip,
+        data.brand,
+        data.stock,
+        name
+    ]);
+
+    return true;
+}
+
+// id is order_id
+// will return object
+async function insertOrder(username, status)
+{
+    let result = false;
+
+    const temp = await query(DEFAULT_INSERT_ORDER, [username, status]);
+
+    let orderid = -1;
+    if (temp.rows.length > 0)
+    {
+        result = true;
+        orderid = temp.rows[0].id;
+    }
+
+    return { result, orderid };
+}
+
+// will return boolean
+async function insertProductOrder(id, product_id, count, price_per)
+{
+    let result = false;
+
+    const temp = await query(DEFAULT_INSERT_PRODUCTLIST, [id, product_id, count, price_per]);
+
+    if (temp.rows.length > 0)
+    {
+        result = true;
+    }
+
+    return result;
+}
+
+// will return JavaScript array
+async function queryOrders(condition_query = "", parameters)
+{
+    let result = [];
+
+    if (condition_query.trim() === "")
+    {
+        result = await query(DEFAULT_QUERY_ALL_ORDERS, parameters);
+    }
+    else
+    {
+        result = await query(DEFAULT_QUERY_ALL_ORDERS + condition_query, parameters);
+    }
+
+    // handle no result from query
+    if (result.rows == null)
+    {
+        result = [];
+    }
+    else
+    {
+        result = result.rows; // content returned from postgresql
+    }
+
+    result = Array.from(result); // converts to javascript array
+    return result;
+}
+
 module.exports =
 {
-    createExpressSession, 
-    query, queryUsers, queryProducts, queryProductsPagination, queryCategorys, queryCart, 
-    isUsernameExist, isEmailExist, getPasswordFromUsername, getUserFromUsername, isProductNameExists, 
-    insertUser, updateUserPassword, updateUserDetail,
-    getCartRecord, insertCartRecord, updateCartRecord, deleteCartRecord, queryCartAdditional
+    createExpressSession,
+    query, queryProductsJsonAgg, queryCategorys,
+    isUsernameExist, isEmailExist, getPasswordFromUsername, getUserFromUsername, isProductNameExists,
+    queryProducts, insertProduct, updateProduct,
+    queryUsers, insertUser, updateUserPassword, updateUserDetail,
+    queryOrders, insertOrder, insertProductOrder,
+    queryCart, getCartRecord, insertCartRecord, updateCartRecord, deleteCartRecord, queryCartAdditional
 };

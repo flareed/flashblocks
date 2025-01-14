@@ -5,7 +5,7 @@ function getUrlParameter(name)
 }
 
 // Function to sort products by price
-function sortPrice(asc = true)
+function sortPrice(productList, asc = true)
 {
     const products = Array.from(productList.querySelectorAll(".product"));
 
@@ -17,11 +17,11 @@ function sortPrice(asc = true)
         return asc ? priceA - priceB : priceB - priceA;
     });
 
-    updateProductList(products);
+    updateProductList(productList, products);
 }
 
 // Function to sort products by name
-function sortName(asc = true)
+function sortName(productList, asc = true)
 {
     const products = Array.from(productList.querySelectorAll(".product"));
 
@@ -33,11 +33,11 @@ function sortName(asc = true)
         return asc ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
     });
 
-    updateProductList(products);
+    updateProductList(productList, products);
 }
 
 // Helper function to update the product list
-function updateProductList(sortedProducts)
+function updateProductList(productList, sortedProducts)
 {
     productList.innerHTML = ""; // Clear existing products
     sortedProducts.forEach(product => productList.appendChild(product)); // Re-append sorted products
@@ -59,10 +59,10 @@ document.addEventListener("DOMContentLoaded", () =>
     const sort_price_asc_button = document.getElementById("sort-price-asc");
     const sort_price_desc_button = document.getElementById("sort-price-desc");
 
-    sort_name_asc_button.addEventListener("click", () => sortName(asc = true));
-    sort_name_desc_button.addEventListener("click", () => sortName(asc = false));
-    sort_price_asc_button.addEventListener("click", () => sortPrice(true));
-    sort_price_desc_button.addEventListener("click", () => sortPrice(false));
+    sort_name_asc_button.addEventListener("click", () => sortName(productList, asc = true));
+    sort_name_desc_button.addEventListener("click", () => sortName(productList, asc = false));
+    sort_price_asc_button.addEventListener("click", () => sortPrice(productList, true));
+    sort_price_desc_button.addEventListener("click", () => sortPrice(productList, false));
 
     const prevPageButton = document.getElementById("prev-page");
     const nextPageButton = document.getElementById("next-page");
@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () =>
         }
         else
         {
-            limit = parseInt(this.value); // Get selected value (number of items per page)
+            limit = parseInt(this.value); // this.value: selected value
             currentPage = 1;
             applyFilters();
         }

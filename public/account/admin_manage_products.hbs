@@ -4,10 +4,10 @@
         <div class="flex flex-row justify-center md:space-x-2">
             <a href="/account?view=detail" class="hover:text-gray-400 bg-gray-100 p-2">Account Detail</a>
 
+            <a href="/account?view=manage_orders" class="hover:text-gray-400 bg-gray-100 p-2">Manage Orders</a>
             {{#if isAdmin}}
             <a href="/account?view=manage_users" class="hover:text-gray-400 bg-gray-100 p-2">Manage Users</a>
             <a href="/account?view=manage_products" class="hover:text-gray-400 bg-gray-100 p-2">Manage Products</a>
-            <a href="/account?view=manage_orders" class="hover:text-gray-400 bg-gray-100 p-2">Manage Orders</a>
             {{/if}}
         </div>
     </div>
@@ -15,68 +15,54 @@
 
     <!-- Search Form -->
     <div class="flex flex-col md:flex-row space-x-4 space-y-2 md:space-y-0 mb-4">
-        <input type="text" id="search-name" placeholder="Search by name" class="p-2 border border-gray-300 rounded-md"
-            value="{{searchName}}">
+        <input type="text" id="search-display-name" placeholder="Search by display name" class="p-2 border border-gray-300 rounded-md"
+            value="">
         <input type="text" id="search-category" placeholder="Search by category"
-            class="p-2 border border-gray-300 rounded-md" value="{{searchCategory}}">
-        <input type="text" id="search-manufacturer" placeholder="Search by manufacturer"
-            class="p-2 border border-gray-300 rounded-md" value="{{searchManufacturer}}">
+            class="p-2 border border-gray-300 rounded-md" value="">
+        <input type="text" id="search-brand" placeholder="Search by brand" class="p-2 border border-gray-300 rounded-md"
+            value="">
         <select id="sort-by" class="p-2 border border-gray-300 rounded-md">
-            <option value="name-asc" {{#if sortNameAsc}}selected{{/if}}>Sort by Name (A-Z)</option>
-            <option value="name-desc" {{#if sortNameDesc}}selected{{/if}}>Sort by Name (Z-A)</option>
-            <option value="price-asc" {{#if sortPriceAsc}}selected{{/if}}>Sort by Price (Low-High)</option>
-            <option value="price-desc" {{#if sortPriceDesc}}selected{{/if}}>Sort by Price (High-Low)</option>
+            <option value="name-asc">Sort by Name (A-Z)</option>
+            <option value="name-desc">Sort by Name (Z-A)</option>
+            <option value="price-asc">Sort by Price (Low-High)</option>
+            <option value="price-desc">Sort by Price (High-Low)</option>
         </select>
-        <button id="search-btn" class="bg-blue-500 text-white py-2 px-4 rounded-md">Search</button>
+        <button id="search-btn" class="bg-blue-500 text-white py-2 px-4 rounded-md">FILTER</button>
     </div>
 
     <div>
-        <h1 class="text-2xl font-bold mb-4">Product Management</h1>
+        <div class="flex justify-center mb-2">
+            <h1 class="text-2xl font-bold self-center md:mr-2">Product Management</h1>
+            <a href="/account?view=manage_products&action=insert" class="hover:text-gray-600 hover:bg-gray-400 bg-gray-200 p-2">ADD PRODUCT</a>
+        </div>
         <table class="table-auto w-full border-collapse border border-gray-300">
             <thead>
                 <tr>
-                    <th class="border border-gray-300 p-2">Name</th>
+                    <th class="border border-gray-300 p-2">Brand</th>
+                    <th class="border border-gray-300 p-2">Display name</th>
                     <th class="border border-gray-300 p-2">Category</th>
+                    <th class="border border-gray-300 p-2">Description</th>
                     <th class="border border-gray-300 p-2">Price</th>
+                    <th class="border border-gray-300 p-2">Stock</th>
+                    <th class="border border-gray-300 p-2">Edit</th>
                 </tr>
             </thead>
             <tbody>
                 {{#each products}}
                 <tr>
-                    <td class="border border-gray-300 p-2">{{product_name}}</td>
+                    <td class="border border-gray-300 p-2">{{product_brand}}</td>
+                    <td class="border border-gray-300 p-2">{{product_display_name}}</td>
                     <td class="border border-gray-300 p-2">{{product_category}}</td>
+                    <td class="border border-gray-300 p-2">{{product_description}}</td>
                     <td class="border border-gray-300 p-2">${{product_price}}</td>
+                    <td class="border border-gray-300 p-2">{{product_stock}}</td>
+                    <td class="border border-gray-300 p-2">
+                        <a href="/account?view=manage_orders&id={{product_name}}"
+                            class="hover:text-gray-600 hover:bg-gray-300 bg-gray-100 p-2">CLICK ME</a>
+                    </td>
                 </tr>
                 {{/each}}
             </tbody>
         </table>
     </div>
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function ()
-    {
-        const searchBtn = document.getElementById("search-btn");
-        const name_textbox = document.getElementById("search-name");
-        const category_textbox = document.getElementById("search-category");
-        const manufacturer_textbox = document.getElementById("search-manufacturer");
-        const sort_combobox = document.getElementById("sort-by");
-
-        searchBtn.addEventListener("click", function ()
-        {
-            const searchName = name_textbox.value.trim();
-            const searchCategory = category_textbox.value.trim();
-            const searchManufacturer = manufacturer_textbox.value.trim();
-            const sort = sort_combobox.value;
-
-            const url = new URL(window.location.href);
-            url.searchParams.set("view", "manage_products");
-            if (searchName) url.searchParams.set("search", searchName);
-            if (searchCategory) url.searchParams.set("category", searchCategory);
-            if (searchManufacturer) url.searchParams.set("manufacturer", searchManufacturer);
-            if (sort) url.searchParams.set("sort", sort);
-
-            window.location.href = url.toString(); // Redirect to the updated URL with parameters
-        });
-    });
-</script>

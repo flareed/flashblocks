@@ -4,20 +4,56 @@
         <div class="flex flex-row justify-center md:space-x-2">
             <a href="/account?view=detail" class="hover:text-gray-400 bg-gray-100 p-2">Account Detail</a>
 
+            <a href="/account?view=manage_orders" class="hover:text-gray-400 bg-gray-100 p-2">Manage Orders</a>
             {{#if isAdmin}}
             <a href="/account?view=manage_users" class="hover:text-gray-400 bg-gray-100 p-2">Manage Users</a>
             <a href="/account?view=manage_products" class="hover:text-gray-400 bg-gray-100 p-2">Manage Products</a>
-            <a href="/account?view=manage_orders" class="hover:text-gray-400 bg-gray-100 p-2">Manage Orders</a>
             {{/if}}
         </div>
     </div>
 
+    <!-- Filters and Sorting -->
+    <div class="mb-4 flex space-x-4">
+        <label for="statusFilter" class="flex items-center space-x-2">
+            <span>Status:</span>
+            <select id="statusFilter" class="border border-gray-300 p-2">
+                <option value="">All</option>
+                <option value="pending">Pending</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+            </select>
+        </label>
+        <label for="dateSort" class="flex items-center space-x-2">
+            <span>Sort by Date:</span>
+            <select id="dateSort" class="border border-gray-300 p-2">
+                <option value="id-asc">ID (A->Z)</option>
+                <option value="date-desc">Newest First</option>
+                <option value="date-asc">Oldest First</option>
+            </select>
+        </label>
+    </div>
+
     <div>
-        <h1 class="text-2xl font-bold mb-4">Order Management</h1>
-        <ul class="list-disc pl-5">
-            {{#each orders}}
-            <li>{{this}}</li>
-            {{/each}}
-        </ul>
+        <h1 class="text-2xl font-bold mb-4 text-center">Order Management</h1>
+        <table class="table-auto border-collapse border border-gray-300">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="border border-gray-300 px-4 py-2">ID</th>
+                    <th class="border border-gray-300 px-4 py-2">User</th>
+                    <th class="border border-gray-300 px-4 py-2">Created Date</th>
+                    <th class="border border-gray-300 px-4 py-2">Status</th>
+                </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+                {{#each orders}}
+                <tr>
+                    <td class="border border-gray-300 px-4 py-2">{{id}}</td>
+                    <td class="border border-gray-300 px-4 py-2">{{user}}</td>
+                    <td class="border border-gray-300 px-4 py-2">{{formatDate created_date}}</td>
+                    <td class="border border-gray-300 px-4 py-2">{{status}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
     </div>
 </div>

@@ -1,4 +1,4 @@
-const cartRows = document.querySelectorAll('.cart-row');
+let cartRows = document.querySelectorAll('.cart-row');
 
 // Iterate over each cart row
 cartRows.forEach(row =>
@@ -24,12 +24,14 @@ cartRows.forEach(row =>
                 row.remove();
                 // Send delete request to the server
                 await sendDeleteRequest(product_name);
-            } else
+            }
+            else
             {
                 // Send update request to the server
                 await updateCart(product_name, quantity);
             }
-        } else
+        }
+        else
         {
             row.remove(); // Remove the row if quantity goes to 0
         }
@@ -80,7 +82,7 @@ async function updateCart(product_name, quantity)
         {
             console.error("Failed to update cart:");
         }
-    } 
+    }
     catch (error)
     {
         console.error("Error updating cart:", error);
@@ -116,7 +118,7 @@ function updateTotalPrice()
 {
     let total = 0;
     // can't use the one from global. As if deletion, it will be wrong (will still remember the selected of deleted row)
-    const cartRows = document.querySelectorAll('.cart-row'); 
+    cartRows = document.querySelectorAll('.cart-row');
 
     // Iterate over each cart row
     cartRows.forEach(row =>
@@ -145,3 +147,59 @@ document.querySelectorAll('.product-select').forEach(checkbox =>
 
 // Recalculate total price on page load
 updateTotalPrice();
+
+document.getElementById("cart-order-button").addEventListener('click', async function ()
+{
+    const selectedCheckboxes = document.querySelectorAll('.product-select:checked'); // Get all selected checkboxes
+    const products = [];
+
+    if (selectedCheckboxes.length === 0)
+    {
+        // If no checkboxes are selected, show the message
+        myutilities.showMessage("Please select at least one product to to order");
+        return;
+    }
+
+    let product_id = "";
+    let product_name = "";
+    let product_price = 0;
+    let product_quantity = 0;
+
+    selectedCheckboxes.forEach((checkbox) =>
+    {
+        const productRow = checkbox.closest('.cart-row'); // Find the row for this checkbox
+        product_id = productRow.querySelector('.product-id').innerText;
+        product_name = productRow.querySelector('.product-name').innerText;
+        product_price = productRow.querySelector('.price').innerText;
+        product_quantity = productRow.querySelector('.product-quantity').innerText;
+
+        // Collect the row and the product name for deletion
+        products.push({ product_id, product_name, product_price, product_quantity });
+    });
+
+    const response = await fetch("/cart?action=order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            products
+        })
+    });
+
+    const reply = await response.json();
+    if (response.ok)
+    {
+        products.forEach(product =>
+        {
+            sendDeleteRequest(product.product_name);
+        });
+
+        selectedCheckboxes.forEach((checkbox) =>
+        {
+            const productRow = checkbox.closest('.cart-row'); // Find the row for this checkbox
+            productRow.remove(); // Remove the row from the DOM
+        });
+
+        updateTotalPrice();
+    }
+    myutilities.showMessage(reply.message);
+});

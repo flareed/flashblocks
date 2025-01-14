@@ -10,7 +10,9 @@
     <script src="/files/css/tailwind_cdn.css"></script>
 
     <link rel="stylesheet" href="/files/css/icons.css">
-    {{!--<link rel="stylesheet" href="default.css"> --}}
+    <link rel="icon" href="/files/icons/favicon.svg" sizes="any" type="image/svg+xml">
+    {{!--
+    <link rel="stylesheet" href="default.css"> --}}
 </head>
 
 <body>
@@ -71,14 +73,14 @@
                         <p class="ml-1">Register</p>
                     </a>
 
-                     <a href="/login"
+                    <a href="/login"
                         class="w-1/2 flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded mt-2 lg:mt-0">
                         <div class="account-icon w-6 h-6"></div>
                         <p class="ml-1">Login</p>
                     </a>
                     {{/if}}
 
-                     <a href="/cart"
+                    <a href="/cart"
                         class="w-1/2 flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded mt-2 lg:mt-0">
                         <div class="cart-icon w-6 h-6"></div>
                         <p class="ml-1">Cart</p>
@@ -205,43 +207,63 @@
     {{#if client_needHandlebars}}
     <script src="/files/js/handlebars.js"></script>
     {{/if}}
-    
+
     {{#if needUtilities}}
     <script src="/files/js/ajax_utilities.js"></script>
     {{/if}}
-    
+
     {{#if needFiltering}}
     <script src="/files/js/ajax_search_filtering.js"></script>
     {{/if}}
-    
+
     {{#if isRegisterPage}}
     <script src="/files/js/ajax_register.js"></script>
     {{/if}}
-    
+
     {{#if isLoginPage}}
     <script src="/files/js/ajax_login.js"></script>
     {{/if}}
-    
+
     {{#if isForgetPage}}
     <script src="/files/js/ajax_forget.js"></script>
     {{/if}}
-    
+
     {{#if isAccountPage}}
     <script src="/files/js/ajax_account.js"></script>
     {{/if}}
-    
+
     {{#if isAccountDetailPage}}
     <script src="/files/js/ajax_account_detail.js"></script>
     {{/if}}
+
+    {{#if isManageUsersPage}}
+    <script src="/files/js/ajax_account_manage_users.js"></script>
+    {{/if}}
     
+    {{#if isManageProductsPage}}
+    <script src="/files/js/ajax_account_manage_products.js"></script>
+    {{/if}}
+
+    {{#if isManageOrdersPage}}
+    <script src="/files/js/ajax_account_manage_orders.js"></script>
+    {{/if}}
+
+    {{#if isManageProductsPage_Insert}}
+    <script src="/files/js/ajax_account_insert_product.js"></script>
+    {{/if}}
+
+    {{#if isManageProductsPage_Update}}
+    <script src="/files/js/ajax_account_update_product.js"></script>
+    {{/if}}
+
     {{#if isCartPage}}
     <script src="/files/js/ajax_cart.js"></script>
     {{/if}}
-    
+
     {{#if needAddtoCart}}
     <script src="/files/js/ajax_addtocart.js"></script>
     {{/if}}
-    
+
 </body>
 
 </html>

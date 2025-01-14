@@ -4,10 +4,10 @@
         <div class="flex flex-row justify-center md:space-x-2">
             <a href="/account?view=detail" class="hover:text-gray-400 bg-gray-100 p-2">Account Detail</a>
 
+            <a href="/account?view=manage_orders" class="hover:text-gray-400 bg-gray-100 p-2">Manage Orders</a>
             {{#if isAdmin}}
             <a href="/account?view=manage_users" class="hover:text-gray-400 bg-gray-100 p-2">Manage Users</a>
             <a href="/account?view=manage_products" class="hover:text-gray-400 bg-gray-100 p-2">Manage Products</a>
-            <a href="/account?view=manage_orders" class="hover:text-gray-400 bg-gray-100 p-2">Manage Orders</a>
             {{/if}}
         </div>
     </div>

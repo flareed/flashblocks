@@ -1,0 +1,115 @@
+<div class="content flex flex-col items-center space-y-8">
+    <!-- Navigation -->
+    <div>
+        <h2 class="text-lg font-bold mb-4 text-center">Navigation</h2>
+        <div class="flex flex-row justify-center md:space-x-2">
+            <a href="/account?view=detail" class="hover:text-gray-400 bg-gray-100 p-2">Account Detail</a>
+
+            <a href="/account?view=manage_orders" class="hover:text-gray-400 bg-gray-100 p-2">Manage Orders</a>
+            {{#if isAdmin}}
+            <a href="/account?view=manage_users" class="hover:text-gray-400 bg-gray-100 p-2">Manage Users</a>
+            <a href="/account?view=manage_products" class="hover:text-gray-400 bg-gray-100 p-2">Manage Products</a>
+            {{/if}}
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="flex flex-col w-full items-center">
+       
+        <h1 class="text-2xl font-bold mb-4">
+             {{#if isManageProductsPage_Insert}}Add Product{{/if}}
+             {{#if isManageProductsPage_Update}}Update Product{{/if}}
+            </h1>
+        <form id="update-form" class="w-full max-w-lg space-y-4">
+            <div class="flex flex-col {{#unless isManageProductsPage_Insert}}hidden{{/unless}}">
+                <label for="product-name" class="mb-2 font-medium">Product ID (case sensitive)</label>
+                <input type="text" id="product-name" name="name" value="{{product.product_name}}"
+                    class="p-2 border border-gray-300 rounded-md" required>
+            </div>
+
+            <div class="flex flex-col">
+                <label for="display-name" class="mb-2 font-medium">Product Display Name</label>
+                <input type="text" id="display-name" name="display_name" value="{{product.product_display_name}}"
+                    class="p-2 border border-gray-300 rounded-md" required>
+            </div>
+
+            <div class="flex flex-col">
+                <label for="category" class="mb-2 font-medium">Category</label>
+                <select id="category" name="category" class="p-2 border border-gray-300 rounded-md">
+                    <option value=" ">No Category</option>
+                    <option value="EDC Flashlight" {{#if (eq product.product_category "EDC Flashlight"
+                        )}}selected{{/if}}>EDC Flashlight</option>
+                    <option value="Tactical Flashlight" {{#if (eq product.product_category "Tactical Flashlight"
+                        )}}selected{{/if}}>Tactical Flashlight</option>
+                    <option value="Diving Flashlight" {{#if (eq product.product_category "Diving Flashlight"
+                        )}}selected{{/if}}>Diving Flashlight</option>
+                </select>
+            </div>
+
+            <div class="flex flex-col">
+                <label for="price" class="mb-2 font-medium">Price</label>
+                <input type="number" id="price" name="price" value="{{product.product_price}}" step="0.01" min="0"
+                    class="p-2 border border-gray-300 rounded-md" required>
+            </div>
+
+            <div class="flex flex-col">
+                <label for="imagepath" class="mb-2 font-medium">Image Path (ex: /files/images/name.ext)</label>
+                <input type="text" id="imagepath" name="imagepath" value="{{product.product_image}}"
+                    class="p-2 border border-gray-300 rounded-md">
+            </div>
+
+            <div class="flex flex-col">
+                <label for="link" class="mb-2 font-medium">Product Link (ex: /product/productname)</label>
+                <input type="text" id="link" name="link" value="{{product.product_link}}"
+                    class="p-2 border border-gray-300 rounded-md">
+            </div>
+
+            <div class="flex flex-col">
+                <label for="battery" class="mb-2 font-medium">Battery</label>
+                <input type="text" id="battery" name="battery" value="{{product.product_battery}}"
+                    class="p-2 border border-gray-300 rounded-md">
+            </div>
+
+            <div class="flex flex-col">
+                <label for="lumen" class="mb-2 font-medium">Max Lumens</label>
+                <input type="number" id="lumen" name="lumen" value="{{product.product_max_lumens}}" min="0"
+                    class="p-2 border border-gray-300 rounded-md">
+            </div>
+
+            <div class="flex flex-col">
+                <label for="description" class="mb-2 font-medium">Description</label>
+                <textarea id="description" name="description" class="p-2 border border-gray-300 rounded-md"
+                    rows="4">{{product.product_description}}</textarea>
+            </div>
+
+            <div class="flex flex-col">
+                <label for="led_chip" class="mb-2 font-medium">LED Chip</label>
+                <input type="text" id="led_chip" name="led_chip" value="{{product.product_led_chip}}"
+                    class="p-2 border border-gray-300 rounded-md">
+            </div>
+
+            <div class="flex flex-col">
+                <label for="brand" class="mb-2 font-medium">Brand</label>
+                <input type="text" id="brand" name="brand" value="{{product.product_brand}}"
+                    class="p-2 border border-gray-300 rounded-md">
+            </div>
+
+            <div class="flex flex-col">
+                <label for="stock" class="mb-2 font-medium">Stock</label>
+                <input type="number" id="stock" name="stock" value="{{product.product_stock}}"
+                    class="p-2 border border-gray-300 rounded-md">
+            </div>
+
+            <div class="flex flex-row justify-end space-x-4">
+                <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-md">SEND</button>
+                <a href="/account?view=manage_products"
+                    class="bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400">Go back</a>
+            </div>
+
+            <section class="mt-4 bg-red-500 w-full hidden" id="message-section">
+                <div class="font-bold p-4" id="message"></div>
+            </section>
+        </form>
+
+    </div>
+</div>

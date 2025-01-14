@@ -42,10 +42,6 @@ router.post('/', async function (req, res, next)
     const product_template = await readfile.getFileContent(product_template_path);
     const products_json = JSON.stringify(products, null, 4); // string, replacer, tab_length
 
-    // console.log(`Current Page: ${page}`)
-    // console.log(`Limt: ${limit}`)
-    // console.log(`Total page: ${page_count}`)
-
     res.json({
         product_template: product_template,
         product_list: products_json,

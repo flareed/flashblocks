@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const database = require(path.join(__dirname, "/resources/js/database.js"));
 const mypassport = require(path.join(__dirname, "/resources/js/passport.js"));
+const hbs = require("hbs");
 
 const app = express();
 app.set('view engine', 'hbs');
@@ -14,6 +15,15 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+/* Handle bar helper */
+hbs.registerHelper("eq", function (a, b) {
+    return a === b;
+});
+hbs.registerHelper('formatDate', function(date) {
+    // Format the date using the browser's locale settings
+    return new Date(date).toLocaleString();
+});
 
 /* Static file location */
 app.use('/files', express.static(path.join(__dirname, 'resources')));

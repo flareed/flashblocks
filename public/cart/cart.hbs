@@ -18,6 +18,7 @@
             <div class="flex flex-col min-h-32 md:min-h-0 md:flex-row md:w-full items-center md:space-x-4">
                 {{!-- Product name, description --}}
                 <div class="flex-grow">
+                    <p class="product-id hidden">{{id}}</p>
                     <p class="product-name hidden">{{name}}</p>
                     <a href="{{link}}">
                         <p class="text-lg font-medium text-gray-800">{{display_name}}</p>
@@ -66,8 +67,8 @@
         </p>
         <!-- Order Button -->
         <button
-            class="bg-indigo-500 text-white px-8 py-2 rounded-lg hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            REVIEW
+            id="cart-order-button" class="bg-indigo-500 text-white px-8 py-2 rounded-lg hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            ORDER
         </button>
     </div>
     {{else}}
